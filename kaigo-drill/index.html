@@ -1,0 +1,1442 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>介護福祉士国家試験 毎日10問ドリル</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=Noto+Serif+JP:wght@400;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  box-sizing:border-box;
+  padding-top:env(safe-area-inset-top,0px);
+  padding-bottom:env(safe-area-inset-bottom,0px);
+  --paper:#FBFAF5; --panel:#FFFFFF; --ink:#1B2433; --ink-soft:#5C6577;
+  --rule:#E0DCD1; --rule-soft:#EFEDE6;
+  --shu:#A93529; --shu-bg:#F6EAE7;
+  --midori:#2C6A4C; --midori-bg:#E7F0EA;
+  --ai:#2C4C8C; --ai-bg:#E8EDF7;
+  --shadow:rgba(30,28,20,.07);
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --paper:#14171B; --panel:#1C2026; --ink:#E9E7E1; --ink-soft:#9AA1AC;
+    --rule:#2F343B; --rule-soft:#262B31;
+    --shu:#E4776A; --shu-bg:#2E211F; --midori:#63B992; --midori-bg:#1E2B25;
+    --ai:#8FAEE8; --ai-bg:#1E2430; --shadow:rgba(0,0,0,.4);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#14171B; --panel:#1C2026; --ink:#E9E7E1; --ink-soft:#9AA1AC;
+  --rule:#2F343B; --rule-soft:#262B31;
+  --shu:#E4776A; --shu-bg:#2E211F; --midori:#63B992; --midori-bg:#1E2B25;
+  --ai:#8FAEE8; --ai-bg:#1E2430; --shadow:rgba(0,0,0,.4);
+}
+html{scroll-padding-top:env(safe-area-inset-top,0px);}
+*{box-sizing:border-box;}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font-family:"Noto Sans JP",-apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif;
+  font-size:15px;line-height:1.75;min-height:100%;
+}
+button{font:inherit;}
+
+.app{max-width:1080px;margin:0 auto;padding:22px 18px 90px;}
+.masthead{display:flex;flex-wrap:wrap;align-items:flex-end;gap:10px 18px;padding-bottom:14px;border-bottom:2px solid var(--ink);}
+.masthead h1{font-family:"Noto Serif JP",serif;font-weight:600;font-size:clamp(19px,3.4vw,25px);margin:0;letter-spacing:.02em;}
+.masthead .sub{color:var(--ink-soft);font-size:12.5px;margin-left:auto;text-align:right;line-height:1.55;}
+
+.cols{display:grid;grid-template-columns:212px 1fr;gap:26px;margin-top:20px;align-items:start;}
+@media (max-width:820px){.cols{grid-template-columns:1fr;gap:18px;}}
+
+/* DAY一覧 */
+.sidebar{position:sticky;top:calc(env(safe-area-inset-top,0px) + 8px);}
+.sb-title{font-size:12.5px;color:var(--ink-soft);margin-bottom:7px;}
+.daygrid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:5px;
+  max-height:58vh;overflow-y:auto;padding:3px;
+  border:1px solid var(--rule);border-radius:8px;background:var(--panel);
+}
+@media (max-width:820px){
+  .daygrid{grid-template-columns:repeat(auto-fill,minmax(50px,1fr));max-height:32vh;}
+}
+.dcell{
+  padding:6px 2px;border:1px solid var(--rule);border-radius:6px;
+  background:transparent;color:var(--ink-soft);cursor:pointer;
+  font-size:12.5px;font-weight:500;text-align:center;line-height:1.3;
+}
+.dcell:hover{border-color:var(--ink-soft);}
+.dcell.made{background:var(--ai-bg);color:var(--ai);border-color:transparent;}
+.dcell.full{background:var(--midori-bg);color:var(--midori);border-color:transparent;}
+.dcell[aria-current="true"]{outline:2px solid var(--ink);outline-offset:-2px;font-weight:700;color:var(--ink);}
+.phead{
+  grid-column:1/-1;font-size:11px;color:var(--ink-soft);font-weight:500;
+  padding:9px 2px 3px;border-bottom:1px solid var(--rule-soft);margin-bottom:2px;line-height:1.5;
+}
+.phead:first-child{padding-top:3px;}
+.dcell.old{box-shadow:inset 0 0 0 1.5px var(--shu);}
+.oldbadge{
+  padding:2px 10px;border-radius:99px;font-size:12px;font-weight:500;
+  background:var(--shu-bg);color:var(--shu);
+}
+.dayhead .theme .phline{font-weight:700;color:var(--ink);font-size:13px;letter-spacing:.02em;}
+.legend{margin-top:10px;font-size:11.5px;color:var(--ink-soft);line-height:1.95;}
+.legend i{display:inline-block;width:9px;height:9px;border-radius:3px;margin-right:6px;vertical-align:middle;border:1px solid var(--rule);}
+.tally{margin-top:9px;font-size:11.5px;color:var(--ink-soft);line-height:1.8;border-top:1px solid var(--rule);padding-top:8px;}
+
+/* 本体 */
+.dayhead{border-bottom:1px solid var(--rule);padding-bottom:12px;}
+.dayhead h2{font-family:"Noto Serif JP",serif;font-size:21px;margin:0 0 4px;font-weight:600;}
+.dayhead .theme{color:var(--ink-soft);font-size:13.5px;}
+.bar{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0 6px;align-items:center;}
+.btn{padding:9px 15px;border-radius:7px;border:1px solid var(--ink);background:var(--ink);color:var(--paper);cursor:pointer;font-size:14px;font-weight:500;}
+.btn.ghost{background:var(--panel);color:var(--ink);}
+.btn.ghost:hover{background:var(--rule-soft);}
+.btn:disabled{opacity:.4;cursor:not-allowed;}
+.sizepick{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--ink-soft);}
+.sizepick button{padding:5px 10px;border:1px solid var(--rule);background:var(--panel);color:var(--ink-soft);border-radius:6px;cursor:pointer;font-size:12.5px;}
+.sizepick button[aria-pressed="true"]{border-color:var(--ink);color:var(--ink);font-weight:700;}
+
+.statusline{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;font-size:13px;color:var(--ink-soft);margin:8px 0 2px;}
+.pill{padding:2px 10px;border-radius:99px;font-size:12px;font-weight:500;}
+.pill.made{background:var(--ai-bg);color:var(--ai);}
+.pill.full{background:var(--midori-bg);color:var(--midori);}
+.notice{margin:14px 0;padding:11px 14px;border-radius:8px;font-size:13.5px;background:var(--shu-bg);color:var(--shu);border:1px solid color-mix(in srgb,var(--shu) 25%,transparent);}
+.notice.info{background:var(--ai-bg);color:var(--ai);border-color:color-mix(in srgb,var(--ai) 25%,transparent);}
+.notice a{color:inherit;font-weight:700;}
+.notice .acts{margin-top:9px;display:flex;gap:9px;flex-wrap:wrap;}
+.notice .acts a,.notice .acts button{
+  padding:7px 13px;border-radius:6px;border:1px solid currentColor;background:transparent;
+  color:inherit;font-size:13px;cursor:pointer;text-decoration:none;font-weight:500;
+}
+
+.qlist{margin-top:20px;display:flex;flex-direction:column;gap:14px;}
+.qcard{background:var(--panel);border:1px solid var(--rule);border-radius:9px;padding:16px 17px;box-shadow:0 1px 3px var(--shadow);}
+.qtop{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;margin-bottom:8px;}
+.qno{font-family:"Noto Serif JP",serif;font-weight:600;font-size:16px;}
+.lv{font-size:11.5px;padding:1px 8px;border-radius:99px;border:1px solid var(--rule);color:var(--ink-soft);}
+.lv.b{border-color:var(--midori);color:var(--midori);}
+.lv.s{border-color:var(--ai);color:var(--ai);}
+.lv.h{border-color:var(--shu);color:var(--shu);}
+.qtag{font-size:11.5px;color:var(--ink-soft);}
+.qtools{margin-left:auto;display:flex;gap:6px;align-items:center;}
+.minibtn{padding:4px 10px;font-size:12.5px;border:1px solid var(--rule);background:transparent;color:var(--ink-soft);border-radius:6px;cursor:pointer;}
+.minibtn:hover{color:var(--ink);border-color:var(--ink-soft);}
+.stem{font-family:"Noto Serif JP",serif;font-size:15.5px;line-height:1.85;margin:2px 0 10px;}
+.opts{list-style:none;margin:0;padding:0;}
+.opts li{display:flex;gap:9px;padding:3px 0;font-size:14.5px;line-height:1.7;}
+.opts li .mk{flex:0 0 auto;color:var(--ink-soft);font-family:"Noto Serif JP",serif;}
+.opts li.correct .mk{color:var(--shu);font-weight:600;}
+.expl{margin-top:12px;border-top:1px dashed var(--rule);padding-top:11px;}
+.expl h4{margin:0 0 7px;font-size:12.5px;color:var(--ink-soft);font-weight:500;}
+.expl ul{list-style:none;margin:0;padding:0;}
+.expl li{display:flex;gap:8px;font-size:13.5px;line-height:1.75;padding:2px 0;}
+.expl li .jm{flex:0 0 auto;font-weight:700;width:2.6em;}
+.expl li.ok .jm{color:var(--shu);}
+.expl li.ng .jm{color:var(--ink-soft);}
+.expl .comment{margin-top:8px;font-size:13px;color:var(--ink-soft);background:var(--rule-soft);padding:8px 11px;border-radius:6px;}
+
+.editor{margin-top:12px;border-top:1px solid var(--rule);padding-top:12px;display:flex;flex-direction:column;gap:9px;}
+.editor label{font-size:12px;color:var(--ink-soft);display:block;margin-bottom:3px;}
+.editor textarea,.editor input,.editor select{width:100%;font:inherit;font-size:14px;padding:7px 9px;border-radius:6px;border:1px solid var(--rule);background:var(--paper);color:var(--ink);resize:vertical;}
+.editor .row{display:flex;gap:9px;flex-wrap:wrap;align-items:center;}
+
+.empty{margin-top:26px;padding:28px 22px;border:1px dashed var(--rule);border-radius:9px;text-align:center;color:var(--ink-soft);font-size:14px;line-height:2;}
+footer.note{margin-top:34px;font-size:12px;color:var(--ink-soft);line-height:1.9;border-top:1px solid var(--rule);padding-top:12px;}
+</style>
+</head>
+<body>
+
+<div class="app">
+  <div class="masthead">
+    <h1>介護福祉士国家試験　毎日10問ドリル</h1>
+    <div class="sub">
+      <div id="storeState">保存先を確認中…</div>
+      <div id="dayScope"></div>
+    </div>
+  </div>
+
+  <div class="cols">
+    <nav class="sidebar" aria-label="DAY選択">
+      <div class="sb-title">DAYを選ぶ</div>
+      <div class="daygrid" id="dayGrid"></div>
+      <div class="legend">
+        <div><i style="background:transparent"></i>未作成</div>
+        <div><i style="background:var(--ai-bg);border-color:var(--ai-bg)"></i>問題作成済み</div>
+        <div><i style="background:var(--midori-bg);border-color:var(--midori-bg)"></i>解答解説まで作成済み</div>
+        <div><i style="background:transparent;border-color:var(--shu);border-width:1.5px"></i>旧ロードマップで作成</div>
+      </div>
+      <div class="tally" id="tally"></div>
+    </nav>
+
+    <main>
+      <div class="dayhead">
+        <h2 id="dayTitle">DAY 1</h2>
+        <div class="theme" id="dayTheme"></div>
+      </div>
+
+      <div class="bar">
+        <button class="btn" id="btnGenQ">問題を作成</button>
+        <button class="btn ghost" id="btnGenA">解答解説を作成</button>
+        <button class="btn ghost" id="btnPdfQ">問題PDFを保存</button>
+        <button class="btn ghost" id="btnPdfA">解説PDFを保存</button>
+        <div class="sizepick">
+          PDF文字
+          <button data-size="fs-s">小</button>
+          <button data-size="fs-m">中</button>
+          <button data-size="fs-l">大</button>
+        </div>
+      </div>
+
+      <div class="statusline">
+        <span id="statePill"></span>
+        <span id="stateText"></span>
+        <span class="oldbadge" id="oldBadge" hidden></span>
+        <button class="minibtn" id="btnStop" hidden>生成を中止</button>
+      </div>
+
+      <div id="msgArea"></div>
+      <div class="qlist" id="qlist"></div>
+      <div class="empty" id="emptyBox">
+        まだ問題がありません。<br>
+        「問題を作成」を押すと、このDAYの範囲で5択問題を10問つくります。
+      </div>
+
+      <footer class="note">
+        生成された問題は自動作成の下書きです。出題内容・法制度・数値は公式資料で確認のうえご使用ください。<br>
+        「問題PDFを保存」「解説PDFを保存」を押すと、A4縦のPDFファイルがそのまま保存されます。保存したPDFを開いて印刷してください。文字の大きさは「PDF文字 小・中・大」で調整できます。
+      </footer>
+    </main>
+  </div>
+</div>
+
+<script>
+(function(){
+"use strict";
+
+/* =========================================================
+   ■ 設定エリア（ロードマップはすべてここに固定で入っています）
+   ========================================================= */
+const TOTAL_DAYS   = 150;
+const VISIBLE_DAYS = 150;
+const PER_DAY      = 10;
+const MIX = { 基礎:7, 標準:2, 難:1 };
+const ROADMAP_VERSION = 2;                 // ロードマップを変えたらこの数字を上げる
+const EXAM = "第39回介護福祉士国家試験（令和8年度・2027年1月31日実施予定）";
+
+/* PHASE区分 */
+const PHASES = [
+  {from:1,   to:100, no:1, name:"全範囲習得期",             mode:"single"},
+  {from:101, to:110, no:2, name:"全範囲復習期（分野別）",     mode:"review"},
+  {from:111, to:115, no:2, name:"全範囲復習期（分野横断）",   mode:"cross1"},
+  {from:116, to:120, no:2, name:"全範囲復習期（横断・応用）", mode:"cross2"},
+  {from:121, to:140, no:3, name:"総合演習期",               mode:"mixed"},
+  {from:141, to:145, no:4, name:"最終仕上げ期（重要論点）",   mode:"keypoints"},
+  {from:146, to:149, no:4, name:"最終仕上げ期（事例・判断）", mode:"case"},
+  {from:150, to:150, no:4, name:"FINAL 10",                mode:"final"},
+];
+
+/* PHASE1：DAY1〜100の固定テーマ  [科目, テーマ, 事例問題の目安数] */
+const DAY_PLAN = [
+  ["介護の基本","介護福祉士の役割・義務・倫理",1],
+  ["人間の尊厳と自立","人間の尊厳・基本的人権",1],
+  ["人間の尊厳と自立","自立・自立支援",1],
+  ["人間の尊厳と自立","ノーマライゼーション・QOL",1],
+  ["人間の尊厳と自立","権利擁護・アドボカシー",1],
+  ["介護の基本","ICFと利用者理解",1],
+  ["介護の基本","介護を必要とする人の理解",1],
+  ["介護の基本","リスクマネジメント・事故防止",2],
+  ["介護の基本","感染対策・安全管理",2],
+  ["介護の基本","チームケア・多職種連携",2],
+
+  ["社会の理解","社会保障の基本",1],
+  ["社会の理解","介護保険制度① 基本構造",1],
+  ["社会の理解","介護保険制度② 保険者・被保険者",1],
+  ["社会の理解","介護保険制度③ 要介護認定",1],
+  ["社会の理解","介護保険制度④ サービス・給付",1],
+  ["社会の理解","障害者総合支援制度",1],
+  ["社会の理解","高齢者・障害者の権利擁護制度",1],
+  ["社会の理解","成年後見・虐待防止",2],
+  ["社会の理解","地域共生社会・地域包括ケア",1],
+  ["社会の理解","家族・地域・生活を支える制度",1],
+
+  ["人間関係とコミュニケーション","自己理解・他者理解",1],
+  ["人間関係とコミュニケーション","対人関係と援助関係",1],
+  ["コミュニケーション技術","基本的コミュニケーション",2],
+  ["コミュニケーション技術","傾聴・受容・共感",2],
+  ["コミュニケーション技術","言語・非言語コミュニケーション",2],
+  ["コミュニケーション技術","視覚・聴覚障害への対応",2],
+  ["コミュニケーション技術","認知症の人とのコミュニケーション",2],
+  ["コミュニケーション技術","家族とのコミュニケーション",2],
+  ["コミュニケーション技術","記録・報告・連絡",1],
+  ["人間関係とコミュニケーション","チームコミュニケーション・人材育成",1],
+
+  ["生活支援技術","生活支援の基本・自立支援",1],
+  ["生活支援技術","居住環境・バリアフリー",1],
+  ["生活支援技術","福祉用具",1],
+  ["生活支援技術","移動・移乗①",2],
+  ["生活支援技術","移動・移乗②",2],
+  ["生活支援技術","車いす・歩行支援",2],
+  ["生活支援技術","身じたく・衣生活",2],
+  ["生活支援技術","整容・口腔ケア",2],
+  ["生活支援技術","食事介助①",2],
+  ["生活支援技術","食事介助②・誤嚥予防",2],
+  ["生活支援技術","入浴・清潔保持①",2],
+  ["生活支援技術","入浴・清潔保持②",2],
+  ["生活支援技術","排泄介助①",2],
+  ["生活支援技術","排泄介助②",2],
+  ["生活支援技術","家事援助",2],
+  ["生活支援技術","睡眠・休息",2],
+  ["生活支援技術","褥瘡・安楽",2],
+  ["生活支援技術","終末期の介護",2],
+  ["生活支援技術","生活支援技術・事例①",5],
+  ["生活支援技術","生活支援技術・事例②",5],
+
+  ["こころとからだのしくみ","人体の基本構造",0],
+  ["こころとからだのしくみ","脳・神経",0],
+  ["こころとからだのしくみ","骨・関節・筋肉",0],
+  ["こころとからだのしくみ","循環・呼吸",1],
+  ["こころとからだのしくみ","消化・栄養",1],
+  ["こころとからだのしくみ","腎・泌尿器",1],
+  ["こころとからだのしくみ","感覚器",1],
+  ["こころとからだのしくみ","移動のしくみ",1],
+  ["こころとからだのしくみ","食事・嚥下のしくみ",2],
+  ["こころとからだのしくみ","排泄のしくみ",1],
+  ["こころとからだのしくみ","入浴・清潔のしくみ",1],
+  ["こころとからだのしくみ","睡眠のしくみ",1],
+  ["こころとからだのしくみ","こころ・記憶・感情",1],
+  ["こころとからだのしくみ","人生の最終段階・死",2],
+
+  ["発達と老化の理解","人間の成長・発達",0],
+  ["発達と老化の理解","発達段階と発達課題",0],
+  ["発達と老化の理解","老化による身体変化",1],
+  ["発達と老化の理解","老化による心理・社会的変化",1],
+  ["発達と老化の理解","高齢者に多い疾患①",1],
+  ["発達と老化の理解","高齢者に多い疾患②",1],
+  ["発達と老化の理解","フレイル・廃用・転倒等",2],
+  ["発達と老化の理解","高齢者の健康管理",1],
+
+  ["認知症の理解","認知症の基本",1],
+  ["認知症の理解","中核症状",1],
+  ["認知症の理解","BPSD",2],
+  ["認知症の理解","アルツハイマー型認知症",1],
+  ["認知症の理解","血管性・レビー小体型等",1],
+  ["認知症の理解","認知症と類似する状態",1],
+  ["認知症の理解","認知症ケア",2],
+  ["認知症の理解","家族支援",2],
+  ["認知症の理解","地域・多職種による認知症支援",2],
+
+  ["障害の理解","障害の概念・ICF",1],
+  ["障害の理解","身体障害",1],
+  ["障害の理解","視覚・聴覚障害",2],
+  ["障害の理解","知的障害",2],
+  ["障害の理解","精神障害",2],
+  ["障害の理解","発達障害",2],
+  ["障害の理解","高次脳機能障害・難病",2],
+  ["障害の理解","障害者・家族への支援",2],
+
+  ["医療的ケア","医療的ケア・安全管理",1],
+  ["医療的ケア","喀痰吸引①",1],
+  ["医療的ケア","喀痰吸引②",2],
+  ["医療的ケア","経管栄養①",1],
+  ["医療的ケア","経管栄養②",2],
+
+  ["介護過程","介護過程の意義",1],
+  ["介護過程","情報収集・アセスメント",2],
+  ["介護過程","課題・ニーズの明確化",2],
+  ["介護過程","介護計画の立案",2],
+  ["介護過程","実施・記録・評価",2],
+  ["介護過程","介護過程・総合事例",4],
+];
+
+/* PHASE2前半：DAY101〜110 分野別総復習 */
+const REVIEW_PLAN = [
+  "土台（介護福祉士の役割と義務・尊厳・自立支援・ICF・リスクマネジメント・感染対策・多職種連携）",
+  "社会保障の基本と介護保険制度（基本構造・保険者と被保険者・要介護認定・サービスと給付）",
+  "障害者総合支援制度・権利擁護・成年後見・虐待防止・地域包括ケア",
+  "コミュニケーション全般（自己理解と援助関係・傾聴と共感・障害特性別の技法・記録と報告）",
+  "生活支援技術①（生活支援の基本・居住環境・福祉用具・移動移乗・身じたく・食事）",
+  "生活支援技術②（入浴清潔・排泄・家事援助・睡眠・褥瘡と安楽・終末期）",
+  "こころとからだのしくみ（人体の構造・脳神経・循環呼吸・消化・排泄・嚥下・睡眠・こころ）",
+  "発達と老化の理解（成長と発達課題・老化に伴う心身の変化・高齢者に多い疾患・フレイルと健康管理）",
+  "認知症の理解（中核症状とBPSD・原因疾患の鑑別・認知症ケア・家族支援・地域支援）",
+  "障害の理解／医療的ケア／介護過程（障害特性別の理解・喀痰吸引と経管栄養・介護過程の展開）",
+];
+
+/* PHASE2後半：DAY111〜120 分野横断 */
+const CROSS_PLAN = [
+  "制度＋介護実践（介護保険や障害福祉のサービスと、実際の介護場面での対応を結びつける）",
+  "認知症＋コミュニケーション（認知症の症状の理解と、それに応じた声かけ・対応を結びつける）",
+  "障害＋生活支援技術（障害特性の理解と、適切な介助方法・環境整備を結びつける）",
+  "身体機能＋介助方法（からだのしくみの理解と、根拠のある介助手順を結びつける）",
+  "介護過程＋事例（アセスメントから計画・実施・評価までを事例の中で判断する）",
+  "制度＋介護＋家族支援（3分野以上。制度の活用・介護実践・家族への支援を一つの事例で判断する）",
+  "認知症＋コミュニケーション＋リスク管理（3分野以上。症状理解・対応・安全確保を同時に判断する）",
+  "障害＋生活支援＋こころとからだのしくみ（3分野以上。障害特性・身体機能・介助方法を統合する）",
+  "老化＋疾患＋医療的ケア＋観察（3分野以上。状態変化の把握と医療職への連携判断を含む）",
+  "介護過程＋多職種連携＋制度活用（3分野以上。情報収集から計画・連携・社会資源活用まで判断する）",
+];
+
+/* PHASE3：DAY121〜140 科目混合（日ごとに配分を変える） */
+const MIXED_PLAN = [
+  [{s:"生活支援技術",n:3},{s:"社会の理解",n:2},{s:"認知症の理解",n:2},{s:"介護の基本",n:1},{s:"こころとからだのしくみ",n:1},{s:"介護過程",n:1}],
+  [{s:"生活支援技術",n:2},{s:"こころとからだのしくみ",n:2},{s:"発達と老化の理解",n:2},{s:"障害の理解",n:2},{s:"コミュニケーション技術",n:1},{s:"人間の尊厳と自立",n:1}],
+  [{s:"生活支援技術",n:3},{s:"認知症の理解",n:2},{s:"介護過程",n:2},{s:"医療的ケア",n:1},{s:"社会の理解",n:1},{s:"介護の基本",n:1}],
+  [{s:"社会の理解",n:3},{s:"介護の基本",n:2},{s:"障害の理解",n:2},{s:"生活支援技術",n:2},{s:"人間関係とコミュニケーション",n:1}],
+  [{s:"生活支援技術",n:3},{s:"こころとからだのしくみ",n:2},{s:"発達と老化の理解",n:2},{s:"介護過程",n:2},{s:"認知症の理解",n:1}],
+  [{s:"障害の理解",n:3},{s:"コミュニケーション技術",n:2},{s:"生活支援技術",n:2},{s:"社会の理解",n:1},{s:"医療的ケア",n:1},{s:"介護の基本",n:1}],
+  [{s:"認知症の理解",n:3},{s:"生活支援技術",n:2},{s:"こころとからだのしくみ",n:2},{s:"介護過程",n:2},{s:"コミュニケーション技術",n:1}],
+  [{s:"社会の理解",n:2},{s:"発達と老化の理解",n:2},{s:"生活支援技術",n:2},{s:"介護の基本",n:2},{s:"人間の尊厳と自立",n:1},{s:"人間関係とコミュニケーション",n:1}],
+  [{s:"生活支援技術",n:3},{s:"医療的ケア",n:2},{s:"こころとからだのしくみ",n:2},{s:"障害の理解",n:2},{s:"認知症の理解",n:1}],
+  [{s:"介護過程",n:3},{s:"生活支援技術",n:2},{s:"社会の理解",n:2},{s:"認知症の理解",n:2},{s:"コミュニケーション技術",n:1}],
+  [{s:"こころとからだのしくみ",n:3},{s:"生活支援技術",n:2},{s:"発達と老化の理解",n:2},{s:"認知症の理解",n:2},{s:"介護の基本",n:1}],
+  [{s:"社会の理解",n:3},{s:"障害の理解",n:3},{s:"介護の基本",n:2},{s:"生活支援技術",n:2}],
+  [{s:"生活支援技術",n:3},{s:"コミュニケーション技術",n:2},{s:"認知症の理解",n:2},{s:"介護過程",n:2},{s:"人間関係とコミュニケーション",n:1}],
+  [{s:"発達と老化の理解",n:3},{s:"こころとからだのしくみ",n:2},{s:"生活支援技術",n:2},{s:"社会の理解",n:2},{s:"医療的ケア",n:1}],
+  [{s:"障害の理解",n:3},{s:"生活支援技術",n:2},{s:"介護過程",n:2},{s:"認知症の理解",n:2},{s:"人間の尊厳と自立",n:1}],
+  [{s:"生活支援技術",n:3},{s:"社会の理解",n:2},{s:"介護の基本",n:2},{s:"こころとからだのしくみ",n:2},{s:"コミュニケーション技術",n:1}],
+  [{s:"認知症の理解",n:3},{s:"コミュニケーション技術",n:2},{s:"生活支援技術",n:2},{s:"発達と老化の理解",n:2},{s:"介護の基本",n:1}],
+  [{s:"生活支援技術",n:3},{s:"医療的ケア",n:2},{s:"介護過程",n:2},{s:"障害の理解",n:2},{s:"社会の理解",n:1}],
+  [{s:"社会の理解",n:2},{s:"こころとからだのしくみ",n:2},{s:"生活支援技術",n:2},{s:"認知症の理解",n:2},{s:"介護の基本",n:2}],
+  [{s:"生活支援技術",n:3},{s:"介護過程",n:2},{s:"障害の理解",n:2},{s:"発達と老化の理解",n:1},{s:"人間関係とコミュニケーション",n:1},{s:"コミュニケーション技術",n:1}],
+];
+/* 混合日の事例問題の目安数（20日分） */
+const MIXED_CASES = [2,2,3,2,3,3,3,2,3,4,2,3,3,2,4,3,4,3,3,4];
+
+/* PHASE4 */
+const KEYPOINT_PLAN = [
+  "介護保険制度と障害者総合支援制度の混同しやすい論点（対象者・申請と認定の流れ・利用者負担の考え方・サービス体系の違い）",
+  "認知症の原因疾患の鑑別（アルツハイマー型・血管性・レビー小体型・前頭側頭型の特徴と、せん妄やうつとの違い）",
+  "移乗・食事・排泄・入浴の安全原則（ボディメカニクス・誤嚥予防・転倒予防・ヒートショック予防など根拠のある手順）",
+  "医療的ケアの実施手順と禁忌（喀痰吸引と経管栄養の手順・観察点・介護福祉士が行える範囲・異常時の対応）",
+  "感染対策・リスクマネジメント・権利擁護（標準予防策・ヒヤリハットと事故対応・身体拘束の要件・虐待防止と通報義務）",
+];
+const CASE_PLAN = [
+  "介護老人福祉施設などで生活する高齢者の事例（入所後の生活変化・ADL低下・多職種連携を含む）",
+  "在宅で生活する利用者と家族の事例（訪問介護・家族の介護負担・社会資源の活用を含む）",
+  "認知症のある利用者の事例（BPSDへの対応・本人の思いの尊重・家族支援・地域の見守りを含む）",
+  "障害のある利用者の事例（身体障害・知的障害・精神障害のいずれかを含み、就労や地域生活支援を含む）",
+];
+
+function planFor(day){
+  const d=Math.min(Math.max(1,day|0),TOTAL_DAYS);
+  const ph=PHASES.find(p=>d>=p.from&&d<=p.to)||PHASES[0];
+  const base={day:d, phaseNo:ph.no, phaseName:ph.name, mode:ph.mode, subject:"", topic:"", cases:2, dist:null};
+  if(ph.mode==="single"){
+    const r=DAY_PLAN[d-1];
+    base.subject=r[0]; base.topic=r[1]; base.cases=r[2];
+  }else if(ph.mode==="review"){
+    base.topic=REVIEW_PLAN[d-101]; base.cases=2; base.subject="分野別復習";
+  }else if(ph.mode==="cross1"){
+    base.topic=CROSS_PLAN[d-111]; base.cases=3; base.subject="分野横断";
+  }else if(ph.mode==="cross2"){
+    base.topic=CROSS_PLAN[d-111]; base.cases=5; base.subject="分野横断（応用）";
+  }else if(ph.mode==="mixed"){
+    base.dist=MIXED_PLAN[d-121]; base.cases=MIXED_CASES[d-121]; base.subject="科目混合";
+    base.topic=base.dist.map(x=>x.s+x.n).join("・");
+  }else if(ph.mode==="keypoints"){
+    base.topic=KEYPOINT_PLAN[d-141]; base.cases=2; base.subject="重要論点の総点検";
+  }else if(ph.mode==="case"){
+    base.topic=CASE_PLAN[d-146]; base.cases=7; base.subject="事例・状況判断";
+  }else{
+    base.topic="150日間の総仕上げ。全領域から幅広く出題し、事例・状況判断問題を中心にする。";
+    base.subject="FINAL 10"; base.cases=5;
+  }
+  return base;
+}
+function planHeadline(p){
+  return "PHASE "+p.phaseNo+"　"+p.phaseName+(p.subject?"　／　"+p.subject:"");
+}
+const MARKS=["①","②","③","④","⑤"];
+
+/* =========================================================
+   ■ 状態
+   ========================================================= */
+const S={
+  day:1, days:{}, status:{},
+  db:null, sample:null, downloads:null,
+  canWrite:true, editing:null, busy:false, ctl:null,
+  size:(localStorage.getItem("kfs-size")||"fs-m"),
+  lastRendered:null,
+};
+
+const LS_DAY=d=>"kfs-day-"+d, LS_ST="kfs-status";
+function lsGet(k,f){ try{const v=localStorage.getItem(k);return v?JSON.parse(v):f;}catch(e){return f;} }
+function lsSet(k,v){ try{localStorage.setItem(k,JSON.stringify(v));}catch(e){} }
+
+let writeChain=Promise.resolve();
+function queueWrite(fn){ writeChain=writeChain.then(fn).catch(e=>console.warn("save",e)); return writeChain; }
+const docId=d=>"days/day-"+String(d).padStart(3,"0");
+
+async function loadDay(day){
+  if(S.days[day]) return S.days[day];
+  let doc=null;
+  if(S.db){
+    try{
+      const snap=await S.db.doc(docId(day)).get();
+      if(snap.exists) doc=JSON.parse(JSON.stringify(snap.data()));
+    }catch(e){ console.warn("load",e); }
+  }
+  if(!doc) doc=lsGet(LS_DAY(day),null);
+  if(!doc) doc={day:day,questions:[],updatedAt:null};
+  S.days[day]=doc;
+  return doc;
+}
+
+function summarize(doc){
+  const qs=(doc&&doc.questions)||[];
+  return {
+    generated: qs.length>0,
+    explained: qs.length>0 && qs.every(q=>q.expl&&q.expl.lines&&q.expl.lines.length===5),
+    total: qs.length,
+    rv: (doc&&doc.roadmapVersion)||1,
+  };
+}
+
+function saveDay(day){
+  const doc=S.days[day];
+  if(!doc) return;
+  doc.updatedAt=new Date().toISOString();
+  lsSet(LS_DAY(day),doc);
+  const st=summarize(doc);
+  S.status[day]=st;
+  lsSet(LS_ST,S.status);
+  renderDayGrid();
+  if(!S.db||!S.canWrite) return;
+  queueWrite(async()=>{
+    await S.db.doc(docId(day)).set(doc);
+    const ref=S.db.doc("meta/status");
+    const cur=await ref.get();
+    const patch={}; patch[String(day)]=st;
+    if(cur.exists) await ref.update(patch); else await ref.set(patch);
+  });
+}
+
+/* =========================================================
+   ■ 画面
+   ========================================================= */
+const $=id=>document.getElementById(id);
+function esc(s){
+  return String(s==null?"":s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+}
+
+function renderDayGrid(){
+  const grid=$("dayGrid");
+  grid.textContent="";
+  let made=0,full=0,old=0;
+  PHASES.forEach(ph=>{
+    if(ph.from>VISIBLE_DAYS) return;
+    const h=document.createElement("div");
+    h.className="phead";
+    h.textContent="PHASE "+ph.no+"　"+ph.name+"　DAY"+ph.from+"-"+ph.to;
+    grid.appendChild(h);
+    for(let d=ph.from;d<=Math.min(ph.to,VISIBLE_DAYS);d++){
+      const st=S.status[d]||{};
+      const p=planFor(d);
+      const b=document.createElement("button");
+      b.className="dcell";
+      b.textContent=String(d);
+      b.title="DAY "+d+"　"+p.subject+(p.mode==="single"?"／"+p.topic:"");
+      if(st.explained){ b.classList.add("full"); full++; made++; }
+      else if(st.generated){ b.classList.add("made"); made++; }
+      if(st.generated && st.rv!==ROADMAP_VERSION){ b.classList.add("old"); old++; }
+      b.setAttribute("aria-current", d===S.day?"true":"false");
+      b.addEventListener("click",()=>selectDay(d));
+      grid.appendChild(b);
+      if(d===S.day) requestAnimationFrame(()=>b.scrollIntoView({block:"nearest"}));
+    }
+  });
+  $("tally").textContent="問題作成済み "+made+"日　／　解説まで "+full+"日　／　全"+VISIBLE_DAYS+"日"
+    +(old?"　／　旧ロードマップ "+old+"日":"");
+}
+
+async function selectDay(d){
+  if(S.busy) return;
+  S.day=d; S.editing=null; msg("");
+  await loadDay(d);
+  renderDayGrid(); renderDay();
+}
+
+function renderDay(){
+  const doc=S.days[S.day]||{questions:[]};
+  const plan=planFor(S.day);
+  $("dayTitle").textContent="DAY "+S.day;
+  const th=$("dayTheme"); th.textContent="";
+  const l1=document.createElement("div");
+  l1.className="phline"; l1.textContent=planHeadline(plan);
+  const l2=document.createElement("div");
+  l2.textContent=(plan.mode==="mixed"?"出題配分：":"テーマ：")+plan.topic;
+  th.append(l1,l2);
+
+  const st=summarize(doc);
+  const pill=$("statePill");
+  pill.hidden=!st.generated;
+  if(st.generated){
+    pill.className="pill "+(st.explained?"full":"made");
+    pill.textContent=st.explained?"解答解説まで作成済み":"問題作成済み";
+  }
+  $("stateText").textContent = st.generated
+    ? (st.explained ? "全"+st.total+"問に解説があります。PDFを保存できます。"
+                    : "全"+st.total+"問。次に「解答解説を作成」を押してください。")
+    : "";
+
+  $("btnGenA").disabled = !st.generated||S.busy;
+  $("btnPdfQ").disabled = !st.generated||S.busy;
+  $("btnPdfA").disabled = !st.explained||S.busy;
+  $("btnGenQ").textContent = st.generated ? "問題を作り直す" : "問題を作成";
+  $("emptyBox").hidden = st.generated;
+
+  const ob=$("oldBadge");
+  const isOld = st.generated && ((doc.roadmapVersion||1)!==ROADMAP_VERSION);
+  ob.hidden=!isOld;
+  if(isOld) ob.textContent="旧ロードマップで作成（「問題を作り直す」で新テーマに更新されます）";
+
+  const list=$("qlist"); list.textContent="";
+  (doc.questions||[]).forEach((q,i)=>list.appendChild(qCard(q,i)));
+  document.querySelectorAll(".sizepick button").forEach(b=>{
+    b.setAttribute("aria-pressed", b.dataset.size===S.size?"true":"false");
+  });
+}
+
+function qCard(q,i){
+  const card=document.createElement("div"); card.className="qcard";
+  const top=document.createElement("div"); top.className="qtop";
+  const no=document.createElement("span"); no.className="qno"; no.textContent="問 "+(i+1);
+  const lv=document.createElement("span");
+  lv.className="lv "+(q.level==="基礎"?"b":q.level==="標準"?"s":"h");
+  lv.textContent=q.level||"—";
+  const tag=document.createElement("span"); tag.className="qtag";
+  tag.textContent=(q.subject||"")+(q.topic?"／"+q.topic:"");
+  const tools=document.createElement("div"); tools.className="qtools";
+  const eb=document.createElement("button"); eb.className="minibtn";
+  eb.textContent=S.editing===i?"編集を閉じる":"編集";
+  eb.addEventListener("click",()=>{ S.editing=(S.editing===i?null:i); renderDay(); });
+  tools.appendChild(eb);
+  top.append(no,lv,tag,tools);
+  card.appendChild(top);
+
+  const stem=document.createElement("p"); stem.className="stem"; stem.textContent=q.stem||"";
+  card.appendChild(stem);
+
+  const ul=document.createElement("ul"); ul.className="opts";
+  (q.options||[]).forEach((o,k)=>{
+    const li=document.createElement("li");
+    if(k===q.answer) li.classList.add("correct");
+    const mk=document.createElement("span"); mk.className="mk"; mk.textContent=MARKS[k];
+    const tx=document.createElement("span"); tx.textContent=o;
+    li.append(mk,tx); ul.appendChild(li);
+  });
+  card.appendChild(ul);
+
+  if(q.expl&&q.expl.lines&&q.expl.lines.length===5){
+    const ex=document.createElement("div"); ex.className="expl";
+    const h=document.createElement("h4"); h.textContent="解答解説（正解："+MARKS[q.answer]+"）";
+    const eul=document.createElement("ul");
+    q.expl.lines.forEach((ln,k)=>{
+      const li=document.createElement("li"); li.className=(k===q.answer?"ok":"ng");
+      const jm=document.createElement("span"); jm.className="jm";
+      jm.textContent=MARKS[k]+" "+(k===q.answer?"○":"×");
+      const tx=document.createElement("span"); tx.textContent=ln;
+      li.append(jm,tx); eul.appendChild(li);
+    });
+    ex.append(h,eul);
+    if(q.expl.comment){
+      const c=document.createElement("div"); c.className="comment";
+      c.textContent="ポイント："+q.expl.comment; ex.appendChild(c);
+    }
+    card.appendChild(ex);
+  }
+  if(S.editing===i) card.appendChild(editor(q));
+  return card;
+}
+
+function editor(q){
+  const w=document.createElement("div"); w.className="editor";
+  const mk=(t,v,r)=>{
+    const d=document.createElement("div");
+    const l=document.createElement("label"); l.textContent=t;
+    const a=document.createElement("textarea"); a.rows=r||2; a.value=v||"";
+    d.append(l,a); w.appendChild(d); return a;
+  };
+  const stemT=mk("問題文",q.stem,3);
+  const optT=(q.options||[]).map((o,k)=>mk("選択肢 "+MARKS[k],o,2));
+  const row=document.createElement("div"); row.className="row";
+  const al=document.createElement("label"); al.textContent="正解";
+  const sel=document.createElement("select"); sel.style.width="auto";
+  MARKS.forEach((m,k)=>{const o=document.createElement("option");o.value=k;o.textContent=m;if(k===q.answer)o.selected=true;sel.appendChild(o);});
+  const ll=document.createElement("label"); ll.textContent="難易度";
+  const lsel=document.createElement("select"); lsel.style.width="auto";
+  ["基礎","標準","難"].forEach(v=>{const o=document.createElement("option");o.value=v;o.textContent=v;if(q.level===v)o.selected=true;lsel.appendChild(o);});
+  row.append(al,sel,ll,lsel); w.appendChild(row);
+  let expT=[];
+  if(q.expl&&q.expl.lines) expT=q.expl.lines.map((ln,k)=>mk("解説 "+MARKS[k],ln,2));
+  const save=document.createElement("button"); save.className="btn"; save.textContent="この問題を保存";
+  save.addEventListener("click",()=>{
+    q.stem=stemT.value.trim();
+    q.options=optT.map(t=>t.value.trim());
+    q.answer=Number(sel.value);
+    q.level=lsel.value;
+    if(expT.length===5&&q.expl) q.expl.lines=expT.map(t=>t.value.trim());
+    S.editing=null; saveDay(S.day); renderDay();
+  });
+  const sw=document.createElement("div"); sw.className="row"; sw.appendChild(save);
+  w.appendChild(sw);
+  return w;
+}
+
+function msg(text,kind){
+  const a=$("msgArea"); a.textContent="";
+  if(!text) return null;
+  const d=document.createElement("div");
+  d.className="notice"+(kind==="info"?" info":"");
+  const p=document.createElement("div"); p.textContent=text;
+  d.appendChild(p); a.appendChild(d);
+  return d;
+}
+
+/* =========================================================
+   ■ 問題生成
+   ========================================================= */
+function balancedTargets(n){
+  const t=[]; for(let i=0;i<n;i++) t.push(i%5);
+  for(let i=t.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[t[i],t[j]]=[t[j],t[i]];}
+  return t;
+}
+function questionPrompt(day){
+  const p=planFor(day);
+  const mix=Object.entries(MIX).map(([k,v])=>k+v+"問").join("・");
+  const L=[];
+
+  L.push("あなたは介護福祉士国家試験の作問を担当する専門家です。");
+  L.push("想定する試験は "+EXAM+" です。この試験の時点で有効な現行制度・現行法を前提にしてください。");
+  L.push("公益財団法人 社会福祉振興・試験センターが公表する出題基準と、近年の過去問の水準・文体に沿って作成してください。");
+  L.push("");
+  L.push("【今日の位置づけ】");
+  L.push("DAY"+p.day+"　PHASE"+p.phaseNo+"　"+p.phaseName);
+  L.push("");
+  L.push("【今日の出題範囲】");
+
+  if(p.mode==="single"){
+    L.push("科目："+p.subject);
+    L.push("テーマ："+p.topic);
+    L.push("10問すべてをこのテーマの範囲から出題する。テーマから外れた内容は出さない。");
+  }else if(p.mode==="review"){
+    L.push("今日は分野別の復習日です。次の範囲の重要論点から、かたよりなく10問を出題する。");
+    L.push("復習範囲："+p.topic);
+    L.push("すでに一度学習した内容の定着を確認する日なので、その分野の頻出・基本論点を優先する。");
+  }else if(p.mode==="cross1"){
+    L.push("今日は分野横断の復習日です。次の組み合わせで10問を出題する。");
+    L.push("組み合わせ："+p.topic);
+    L.push("1問の中で両方の分野の知識を使わないと解けないようにする。片方の知識だけで解ける問題にしない。");
+  }else if(p.mode==="cross2"){
+    L.push("今日は分野横断の復習日（応用）です。次の組み合わせで10問を出題する。");
+    L.push("組み合わせ："+p.topic);
+    L.push("3つ以上の分野の知識を組み合わせないと解けない問題を中心にする。");
+    L.push("単なる用語の知識ではなく、場面を読んで「何を優先し、どう判断するか」を問う形式を多くする。");
+    L.push("ただし難易度の内訳（基礎・標準・難の問題数）は下記の指定どおりにし、問題の構成で歯ごたえを出す。");
+  }else if(p.mode==="mixed"){
+    L.push("今日は科目混合日です。本番の国家試験と同じように、複数の科目から出題する。");
+    L.push("次の配分で合計10問を作る（この配分は必ず守る）。");
+    p.dist.forEach(x=>L.push("・"+x.s+"　"+x.n+"問"));
+    L.push("出題順は科目ごとにまとめず、科目がばらばらに並ぶようにする。");
+    L.push("各問題の subject には、その問題が属する科目名を正確に書く。");
+  }else if(p.mode==="keypoints"){
+    L.push("今日は重要論点の総点検日です。次の範囲から、受験者が間違えやすい論点を中心に10問を出題する。");
+    L.push("点検範囲："+p.topic);
+    L.push("似ていて混同しやすいもの、例外や要件を取り違えやすいものを意識して作る。");
+  }else if(p.mode==="case"){
+    L.push("今日は事例・状況判断の演習日です。次のテーマで10問を出題する。");
+    L.push("事例テーマ："+p.topic);
+    L.push("1〜2の事例を設定し、その事例について複数問を連続して問う形式にしてよい（国家試験の総合問題と同じ形式）。");
+    L.push("知識をそのまま問うのではなく、場面の中で何を判断し、どう対応するかを問う。");
+  }else{
+    L.push("今日は150日間の最終日「FINAL 10」です。");
+    L.push(p.topic);
+    L.push("特定の科目にかたよらず、全13科目のうち少なくとも6科目以上から出題する。");
+    L.push("各問題の subject には、その問題が属する科目名を正確に書く。");
+  }
+
+  L.push("");
+  L.push("【作問ルール】");
+  L.push("・5肢択一式の問題を"+PER_DAY+"問つくる。正解は必ず1つだけ。");
+  L.push("・難易度の内訳は "+mix+"（基礎＝過去問頻出の基本事項、標準＝やや応用、難＝制度の細部や判断）。");
+  L.push("・設問文は国家試験の文体（例：「〜として、最も適切なものを1つ選びなさい」）にする。");
+  if(p.cases>0){
+    L.push("・10問のうち "+p.cases+"問程度を、事例形式または状況判断形式にする。");
+    L.push("・事例文は150字以内で簡潔に書く（A4用紙1枚に印刷するため）。利用者の年齢・状況・場面を必要最小限だけ示す。");
+  }else{
+    L.push("・今日は基礎知識を固める日なので、事例形式は無理に入れなくてよい。");
+  }
+  L.push("・選択肢は5つとも同程度の長さ・文体にし、明らかに不自然な選択肢や、長さだけで正解が分かる選択肢を作らない。");
+  L.push("・設問文に正解のヒントになる表現を入れない。");
+  L.push("・5つの選択肢すべてについて、正しい／誤っていると言い切れる明確な根拠があるものにする。判断が分かれる内容は使わない。");
+  L.push("・「常に」「絶対に」など極端な語で機械的に誤答と分かる作り方をしない。");
+  L.push("");
+  L.push("【制度・数値の扱い】");
+  L.push("・年度によって変わる統計数値、介護報酬の金額、自己負担の金額、高齢化率などの具体的な数値は出題しない。");
+  L.push("・制度は出題してよい。ただし問うのは、制度の基本構造・原則・対象者・実施主体や関係者の役割・手続きの流れ・サービス体系とする。");
+  L.push("・改正が続いている論点で、現行の扱いを確実に言い切れないものは使わない。");
+  L.push("");
+  L.push("【出力形式】");
+  L.push("JSONのみを出力する。前後の説明文やコードフェンスは書かない。");
+  L.push('{"questions":[{"level":"基礎","subject":"科目名","topic":"短いテーマ名","stem":"設問文","options":["選択肢1","選択肢2","選択肢3","選択肢4","選択肢5"],"answer":0}]}');
+  L.push("answer は正解の選択肢の番号（0〜4）。questions は必ず"+PER_DAY+"件。");
+  return L.join("\n");
+}
+function normalizeQuestions(raw){
+  const arr=Array.isArray(raw)?raw:(raw&&raw.questions)||[];
+  const out=[];
+  arr.forEach(q=>{
+    if(!q||typeof q!=="object") return;
+    const opts=Array.isArray(q.options)?q.options.map(x=>String(x||"").trim()).filter(Boolean):[];
+    if(opts.length!==5) return;
+    let a=Number(q.answer); if(!(a>=0&&a<=4)) a=0;
+    out.push({
+      level:["基礎","標準","難"].includes(q.level)?q.level:"基礎",
+      subject:String(q.subject||"").trim(), topic:String(q.topic||"").trim(),
+      stem:String(q.stem||"").trim(), options:opts, answer:a, expl:null,
+    });
+  });
+  const tg=balancedTargets(out.length);
+  out.forEach((q,i)=>{
+    const t=tg[i];
+    if(t!==q.answer){
+      const o=q.options.slice();
+      const tmp=o[t]; o[t]=o[q.answer]; o[q.answer]=tmp;
+      q.options=o; q.answer=t;
+    }
+  });
+  return out;
+}
+
+/* 枠の中ではブラウザの確認ダイアログが使えないため、ページ内で確認する */
+function askConfirm(text,okLabel,onOk){
+  const box=msg(text);
+  if(!box){ onOk(); return; }
+  const acts=document.createElement("div"); acts.className="acts";
+  const ok=document.createElement("button");
+  ok.textContent=okLabel;
+  ok.addEventListener("click",()=>{ msg(""); onOk(); });
+  const no=document.createElement("button");
+  no.textContent="キャンセル";
+  no.addEventListener("click",()=>msg(""));
+  acts.append(ok,no); box.appendChild(acts);
+}
+
+function genQuestions(){
+  if(!S.sample){ msg("この画面ではAI生成が使えません。公開されたURLをClaudeにログインした状態で開いてください。"); return; }
+  const doc=S.days[S.day];
+  if(doc.questions&&doc.questions.length){
+    askConfirm(
+      "DAY "+S.day+" の問題を作り直します。今の問題と解答解説は消えます。",
+      "作り直す",
+      ()=>runGenQuestions());
+    return;
+  }
+  runGenQuestions();
+}
+
+async function runGenQuestions(){
+  const doc=S.days[S.day];
+  setBusy(true,"問題を作成中です（30秒〜2分ほどかかります）…");
+  try{
+    S.ctl=new AbortController();
+    const data=await S.sample.json(questionPrompt(S.day),{modelTier:"complex",cache:false,signal:S.ctl.signal});
+    const qs=normalizeQuestions(data);
+    if(qs.length===0){ msg("問題を作れませんでした。もう一度お試しください。"); setBusy(false); renderDay(); return; }
+    doc.questions=qs.slice(0,PER_DAY);
+    doc.plan=planFor(S.day);
+    doc.roadmapVersion=ROADMAP_VERSION;
+    doc.generatedAt=new Date().toISOString();
+    saveDay(S.day);
+    const c={基礎:0,標準:0,難:0}; doc.questions.forEach(q=>c[q.level]++);
+    const ok=(qs.length>=PER_DAY&&c.基礎===MIX.基礎&&c.標準===MIX.標準&&c.難===MIX.難);
+    msg(ok?"問題を作成しました。続けて「解答解説を作成」を押してください。"
+          :"問題を作成しました（"+doc.questions.length+"問／基礎"+c.基礎+"・標準"+c.標準+"・難"+c.難+"）。必要なら編集で調整してください。",
+        ok?"info":null);
+  }catch(e){ msg(errText(e)); }
+  setBusy(false); renderDay();
+}
+
+function explPrompt(qs,offset){
+  const payload=qs.map((q,i)=>({
+    no:offset+i+1, stem:q.stem,
+    options:q.options.map((o,k)=>MARKS[k]+" "+o),
+    answer:MARKS[q.answer],
+  }));
+  return [
+    "あなたは介護福祉士国家試験の解説を書く専門家です。次の問題について、受験者向けの解答解説を作成してください。","",
+    "【条件】",
+    "・各問題について、①〜⑤すべての選択肢に1行ずつ理由を書く。",
+    "・正解の選択肢には「なぜ正しいのか」、不正解の選択肢には「なぜ誤りなのか（正しくは何か）」を書く。",
+    "・1行は45字以内。○や×の記号、選択肢番号は書かず、理由の文だけを書く。",
+    "・断定できない内容は書かない。",
+    "・comment には、その問題で押さえるべき要点を50字以内で書く。","",
+    "【問題】", JSON.stringify(payload,null,1), "",
+    "【出力形式】","JSONのみを出力する。前後の説明文やコードフェンスは書かない。",
+    '{"explanations":[{"no":1,"lines":["①の理由","②の理由","③の理由","④の理由","⑤の理由"],"comment":"要点"}]}',
+    "lines は必ず5件、問題の①〜⑤の順に並べる。explanations は入力した問題と同じ件数。",
+  ].join("\n");
+}
+
+async function genExplanations(){
+  if(!S.sample){ msg("この画面ではAI生成が使えません。公開されたURLをClaudeにログインした状態で開いてください。"); return; }
+  const doc=S.days[S.day]; const qs=doc.questions||[];
+  if(!qs.length) return;
+  setBusy(true,"解答解説を作成中です…");
+  try{
+    S.ctl=new AbortController();
+    const chunks=[qs.slice(0,5),qs.slice(5,10)].filter(c=>c.length);
+    let off=0;
+    for(let ci=0;ci<chunks.length;ci++){
+      setBusy(true,"解答解説を作成中です（"+(ci+1)+"／"+chunks.length+"）…");
+      const data=await S.sample.json(explPrompt(chunks[ci],off),{modelTier:"complex",cache:false,signal:S.ctl.signal});
+      const list=(data&&data.explanations)||[];
+      list.forEach(e=>{
+        const q=qs[Number(e.no)-1]; if(!q) return;
+        const lines=Array.isArray(e.lines)?e.lines.map(x=>String(x||"").trim()):[];
+        if(lines.length!==5) return;
+        q.expl={lines:lines,comment:String(e.comment||"").trim()};
+      });
+      off+=chunks[ci].length;
+      saveDay(S.day); renderDay();
+    }
+    const missing=qs.filter(q=>!q.expl).length;
+    msg(missing?missing+"問の解説が作れませんでした。もう一度押してください。"
+               :"解答解説を作成しました。PDFを保存できます。", missing?null:"info");
+  }catch(e){ msg(errText(e)); }
+  setBusy(false); renderDay();
+}
+
+function errText(e){
+  const c=e&&e.code;
+  if(c==="cancelled") return "生成を中止しました。";
+  if(c==="not_granted"||c==="sampling_disabled") return "AI生成の利用が許可されていません。ページを開き直し、確認に「許可」を選んでください。";
+  if(c==="rate_limited") return "短時間に使いすぎたため、しばらく利用できません。数分おいてからお試しください。";
+  if(c==="invalid_json") return "AIの返答が読み取れませんでした。もう一度お試しください。";
+  if(c==="session_expired") return "ログインの有効期限が切れました。ページを再読み込みしてください。";
+  return "うまく作成できませんでした。もう一度お試しください。";
+}
+
+function setBusy(on,text){
+  S.busy=on;
+  $("btnGenQ").disabled=on;
+  $("btnGenA").disabled=on||!((S.days[S.day].questions||[]).length);
+  $("btnStop").hidden=!on;
+  if(on) msg(text,"info"); else S.ctl=null;
+}
+
+/* =========================================================
+   ■ PDF作成（ブラウザの印刷機能は使わず、PDFファイルを直接作る）
+      紙面をCanvasに描き、JPEGにしてPDFに包んで保存する。
+   ========================================================= */
+const MM = 8;                 // 1mm = 8px（約203dpi）
+const PW = 210, PH = 297;     // A4縦(mm)
+const PC = {
+  frame:"#BFD8EE", deep:"#1B5A96", blue:"#2E7BC4", soft:"#E6F0FA",
+  line:"#B9D5EC", ink:"#15202B", rule:"#D8E6F3", white:"#FFFFFF",
+  bBg:"#DCEBF9", bTx:"#1B5A96",
+  sBg:"#FBF1CE", sTx:"#7A5F16",
+  hBg:"#FADCE6", hTx:"#9C3A57"
+};
+const FAM = '"Noto Sans JP","Hiragino Sans","Yu Gothic","Meiryo",sans-serif';
+const NOSTART = "。、）」』〕】〉》.,)!?！？ー：；";
+const FS_CAP = {"fs-s":8.6,"fs-m":9.8,"fs-l":11.0};
+
+function mm(v){ return v*MM; }
+function fpx(pt){ return pt*MM*0.3528; }
+function setFont(ctx,pt,weight){
+  ctx.font=(weight||400)+" "+fpx(pt).toFixed(2)+"px "+FAM;
+}
+
+/* 日本語の折り返し（行頭禁則つき） */
+function wrapJa(ctx,text,maxW){
+  const lines=[]; let cur="";
+  text=String(text==null?"":text);
+  for(let i=0;i<text.length;i++){
+    const ch=text.charAt(i);
+    if(ch==="\n"){ lines.push(cur); cur=""; continue; }
+    const t=cur+ch;
+    if(cur && ctx.measureText(t).width>maxW){
+      if(NOSTART.indexOf(ch)>=0){ cur=t; continue; }
+      lines.push(cur); cur=ch;
+    }else cur=t;
+  }
+  if(cur!=="") lines.push(cur);
+  return lines.length?lines:[""];
+}
+
+function roundRect(ctx,x,y,w,h,r){
+  r=Math.min(r,w/2,h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);
+  ctx.lineTo(x+w-r,y); ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r); ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h); ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r); ctx.quadraticCurveTo(x,y,x+r,y);
+  ctx.closePath();
+}
+
+function lvColors(lv){
+  if(lv==="標準") return {bg:PC.sBg,tx:PC.sTx};
+  if(lv==="難")   return {bg:PC.hBg,tx:PC.hTx};
+  return {bg:PC.bBg,tx:PC.bTx};
+}
+
+/* 1問ぶんを描く／測る（draw=false なら高さだけ返す） */
+function qBlock(ctx,q,idx,isQ,x,y,w,fs,draw){
+  const lh=fpx(fs)*1.5, pad=mm(1.5), top=y;
+  const badgeH=fpx(fs)*1.7;
+  const numTxt=("0"+(idx+1)).slice(-2);
+
+  setFont(ctx,fs+4.2,700);
+  const numW=ctx.measureText(numTxt).width+mm(4.4);
+  if(draw){
+    ctx.fillStyle=PC.soft; roundRect(ctx,x,y,numW,badgeH,mm(1.4)); ctx.fill();
+    ctx.fillStyle=PC.deep; ctx.textBaseline="middle"; ctx.textAlign="center";
+    ctx.fillText(numTxt,x+numW/2,y+badgeH/2+fpx(fs)*0.04);
+    ctx.textAlign="left";
+  }
+  let cx=x+numW+mm(2);
+
+  if(!isQ){
+    const aTxt="正解 "+MARKS[q.answer];
+    setFont(ctx,fs+1,700);
+    const aW=ctx.measureText(aTxt).width+mm(5.2);
+    if(draw){
+      ctx.fillStyle=PC.soft; roundRect(ctx,cx,y+(badgeH-fpx(fs)*1.5)/2,aW,fpx(fs)*1.5,mm(1.4)); ctx.fill();
+      ctx.strokeStyle=PC.line; ctx.lineWidth=Math.max(1,mm(0.22)); ctx.stroke();
+      ctx.fillStyle=PC.deep; ctx.textBaseline="middle"; ctx.textAlign="center";
+      ctx.fillText(aTxt,cx+aW/2,y+badgeH/2+fpx(fs)*0.04);
+      ctx.textAlign="left";
+    }
+    cx+=aW+mm(1.8);
+  }
+
+  const lvTxt=q.level||"—", lc=lvColors(lvTxt);
+  setFont(ctx,fs-0.4,700);
+  const lW=ctx.measureText(lvTxt).width+mm(4.8);
+  if(draw){
+    ctx.fillStyle=lc.bg; roundRect(ctx,cx,y+(badgeH-fpx(fs)*1.45)/2,lW,fpx(fs)*1.45,mm(1.4)); ctx.fill();
+    ctx.fillStyle=lc.tx; ctx.textBaseline="middle"; ctx.textAlign="center";
+    ctx.fillText(lvTxt,cx+lW/2,y+badgeH/2+fpx(fs)*0.04);
+    ctx.textAlign="left";
+  }
+  y+=badgeH+mm(1.2);
+  ctx.textBaseline="top";
+
+  if(isQ){
+    setFont(ctx,fs,400);
+    const sl=wrapJa(ctx,q.stem,w-mm(0.6));
+    for(let i=0;i<sl.length;i++){
+      if(draw){ ctx.fillStyle=PC.ink; ctx.fillText(sl[i],x+mm(0.6),y); }
+      y+=lh;
+    }
+    y+=mm(1.0);
+    const opts=q.options||[];
+    for(let k=0;k<opts.length;k++){
+      setFont(ctx,fs,400);
+      const mW=ctx.measureText(MARKS[k]).width+mm(1.8);
+      const ol=wrapJa(ctx,opts[k],w-mW-mm(1.5));
+      for(let j=0;j<ol.length;j++){
+        if(draw){
+          ctx.fillStyle=PC.ink;
+          if(j===0) ctx.fillText(MARKS[k],x+mm(1.5),y);
+          ctx.fillText(ol[j],x+mm(1.5)+mW,y);
+        }
+        y+=lh;
+      }
+      y+=mm(0.25);
+    }
+  }else{
+    const lines=(q.expl&&q.expl.lines)||[];
+    for(let n=0;n<lines.length;n++){
+      setFont(ctx,fs,400);
+      const markW=ctx.measureText(MARKS[n]).width+mm(1.6);
+      const judgeW=mm(4.6);
+      const indent=mm(1.5)+markW+judgeW;
+      const rl=wrapJa(ctx,lines[n],w-indent-mm(1.0));
+      for(let m=0;m<rl.length;m++){
+        if(draw){
+          ctx.fillStyle=PC.ink;
+          if(m===0){
+            setFont(ctx,fs,400);
+            ctx.fillText(MARKS[n],x+mm(1.5),y);
+            setFont(ctx,fs+0.7,700);
+            ctx.textAlign="center";
+            ctx.fillText(n===q.answer?"○":"×",x+mm(1.5)+markW+judgeW/2,y);
+            ctx.textAlign="left";
+            setFont(ctx,fs,400);
+          }
+          ctx.fillText(rl[m],x+indent,y);
+        }
+        y+=lh;
+      }
+      y+=mm(0.3);
+    }
+  }
+  return (y+pad)-top;
+}
+
+function drawClover(ctx,x,y,s){
+  ctx.save(); ctx.translate(x,y); ctx.scale(s/40,s/40);
+  ctx.fillStyle="#8FB9DC";
+  const leaf=(cx,cy,rot)=>{
+    ctx.save(); ctx.translate(cx,cy); ctx.rotate(rot*Math.PI/180);
+    ctx.beginPath(); ctx.ellipse(0,0,7,8,0,0,Math.PI*2); ctx.fill(); ctx.restore();
+  };
+  leaf(13,12,-30); leaf(28,12,30); leaf(13,26,30); leaf(28,26,-30);
+  ctx.strokeStyle="#8FB9DC"; ctx.lineWidth=2.4; ctx.lineCap="round";
+  ctx.beginPath(); ctx.moveTo(20,24); ctx.bezierCurveTo(22,31,26,34,32,36); ctx.stroke();
+  ctx.restore();
+}
+
+function drawHeader(ctx,day,plan,isQ){
+  const x=mm(10), top=mm(10), w=mm(190);
+  drawClover(ctx,x,top-mm(0.5),mm(9));
+
+  const tx=x+mm(12);
+  ctx.textBaseline="top"; ctx.textAlign="left";
+  setFont(ctx,10,700); ctx.fillStyle=PC.ink;
+  ctx.fillText("介護福祉士　国家試験対策",tx,top-mm(0.2));
+
+  setFont(ctx,19,700); ctx.fillStyle=PC.deep;
+  ctx.fillText("毎日10問ドリル",tx,top+mm(3.4));
+  const bw=ctx.measureText("毎日10問ドリル").width;
+
+  if(!isQ){
+    const kt="解答・解説";
+    setFont(ctx,11,700);
+    const kw=ctx.measureText(kt).width+mm(6);
+    const ky=top+mm(4.6), kh=fpx(11)*1.55;
+    ctx.fillStyle=PC.soft; roundRect(ctx,tx+bw+mm(3),ky,kw,kh,mm(1.6)); ctx.fill();
+    ctx.strokeStyle=PC.line; ctx.lineWidth=Math.max(1,mm(0.2)); ctx.stroke();
+    ctx.fillStyle=PC.deep; ctx.textAlign="center"; ctx.textBaseline="middle";
+    ctx.fillText(kt,tx+bw+mm(3)+kw/2,ky+kh/2);
+    ctx.textAlign="left"; ctx.textBaseline="top";
+  }
+
+  setFont(ctx,19,700);
+  const dn=String(day);
+  const dW=Math.max(ctx.measureText(dn).width+mm(7.2),mm(15));
+  const dX=x+w-dW, dY=top-mm(0.8), dH=mm(12.4);
+  ctx.fillStyle=PC.soft; roundRect(ctx,dX,dY,dW,dH,mm(1.8)); ctx.fill();
+  ctx.fillStyle=PC.blue; ctx.fillRect(dX,dY+mm(1),mm(0.6),dH-mm(2));
+  ctx.fillStyle=PC.deep; ctx.textAlign="center";
+  setFont(ctx,8,700);  ctx.fillText("DAY",dX+dW/2,dY+mm(1.2));
+  setFont(ctx,19,700); ctx.fillText(dn,dX+dW/2,dY+mm(4.0));
+  ctx.textAlign="left";
+
+  const by=top+mm(13.2), bh=mm(8.4);
+  ctx.fillStyle=PC.soft; roundRect(ctx,x,by,w,bh,mm(1.6)); ctx.fill();
+  ctx.textBaseline="middle";
+  setFont(ctx,12,700); ctx.fillStyle=PC.deep;
+  const s1=plan.subject||plan.phaseName||"";
+  ctx.fillText(s1,x+mm(4),by+bh/2);
+  const sw=ctx.measureText(s1).width;
+  setFont(ctx,12,400); ctx.fillStyle=PC.line;
+  ctx.fillText("｜",x+mm(4)+sw+mm(2),by+bh/2);
+  const dw=ctx.measureText("｜").width;
+  setFont(ctx,11,700); ctx.fillStyle=PC.ink;
+  let topic=String(plan.topic||"");
+  const availT=w-mm(8)-sw-mm(2)-dw-mm(2);
+  while(topic && ctx.measureText(topic).width>availT) topic=topic.slice(0,-1);
+  ctx.fillText(topic,x+mm(4)+sw+mm(2)+dw+mm(2),by+bh/2);
+  ctx.textBaseline="top";
+
+  return by+bh+mm(2.4);
+}
+
+function renderSheet(canvas,opt){
+  const ctx=canvas.getContext("2d");
+  canvas.width=Math.round(mm(PW)); canvas.height=Math.round(mm(PH));
+  ctx.fillStyle="#FFFFFF"; ctx.fillRect(0,0,canvas.width,canvas.height);
+  ctx.strokeStyle=PC.frame; ctx.lineWidth=Math.max(1,mm(0.32));
+  roundRect(ctx,mm(6),mm(6),mm(198),mm(285),mm(2)); ctx.stroke();
+
+  const bodyY=drawHeader(ctx,opt.day,opt.plan,opt.isQ);
+  const colW=mm(90.6), gap=mm(8.8);
+  const lx=mm(10), rx=lx+colW+gap, bottom=mm(287);
+
+  ctx.strokeStyle=PC.line; ctx.lineWidth=Math.max(1,mm(0.18));
+  ctx.beginPath(); ctx.moveTo(lx+colW+gap/2,bodyY); ctx.lineTo(lx+colW+gap/2,bottom); ctx.stroke();
+
+  const cols=[{x:lx,y:bodyY},{x:rx,y:bodyY}], first=[true,true];
+  for(let i=0;i<opt.items.length;i++){
+    const it=opt.items[i], col=cols[it.col];
+    if(!first[it.col]){
+      ctx.strokeStyle=PC.rule; ctx.lineWidth=Math.max(1,mm(0.18));
+      ctx.setLineDash([mm(0.9),mm(0.9)]);
+      ctx.beginPath(); ctx.moveTo(col.x,col.y); ctx.lineTo(col.x+colW,col.y); ctx.stroke();
+      ctx.setLineDash([]);
+      col.y+=mm(1.6);
+    }
+    first[it.col]=false;
+    col.y+=qBlock(ctx,it.q,it.idx,opt.isQ,col.x,col.y,colW,opt.fs,true);
+  }
+  return canvas;
+}
+
+function measureSheet(ctx,qs,isQ,fs,colW){
+  const h=[0,0];
+  for(let i=0;i<qs.length;i++){
+    const c=i<5?0:1;
+    let add=qBlock(ctx,qs[i],i,isQ,0,0,colW,fs,false);
+    if(h[c]>0) add+=mm(1.6);
+    h[c]+=add;
+  }
+  return Math.max(h[0],h[1]);
+}
+
+/* PDFバイト列を組み立てる（JPEGをそのまま埋め込む） */
+function buildPdfBytes(jpegs){
+  const WPT=595.28, HPT=841.89;
+  const parts=[]; let len=0;
+  const enc=s=>{ const a=new Uint8Array(s.length);
+    for(let i=0;i<s.length;i++) a[i]=s.charCodeAt(i)&0xff; return a; };
+  const push=u8=>{ parts.push(u8); len+=u8.length; };
+  const ps=s=>push(enc(s));
+
+  const n=jpegs.length, offs={};
+  ps("%PDF-1.4\n%âãÏÓ\n");
+  offs[1]=len; ps("1 0 obj\n<</Type/Catalog/Pages 2 0 R>>\nendobj\n");
+  let kids="";
+  for(let i=0;i<n;i++) kids+=(3+i*3)+" 0 R ";
+  offs[2]=len; ps("2 0 obj\n<</Type/Pages/Kids["+kids.trim()+"]/Count "+n+">>\nendobj\n");
+
+  for(let i=0;i<n;i++){
+    const pObj=3+i*3, iObj=4+i*3, cObj=5+i*3, im=jpegs[i];
+    offs[pObj]=len;
+    ps(pObj+" 0 obj\n<</Type/Page/Parent 2 0 R/MediaBox[0 0 "+WPT+" "+HPT+"]"+
+       "/Resources<</XObject<</Im0 "+iObj+" 0 R>>>>/Contents "+cObj+" 0 R>>\nendobj\n");
+    offs[iObj]=len;
+    ps(iObj+" 0 obj\n<</Type/XObject/Subtype/Image/Width "+im.w+"/Height "+im.h+
+       "/ColorSpace/DeviceRGB/BitsPerComponent 8/Filter/DCTDecode/Length "+im.bytes.length+">>\nstream\n");
+    push(im.bytes);
+    ps("\nendstream\nendobj\n");
+    const content="q "+WPT+" 0 0 "+HPT+" 0 0 cm /Im0 Do Q\n";
+    offs[cObj]=len;
+    ps(cObj+" 0 obj\n<</Length "+content.length+">>\nstream\n"+content+"endstream\nendobj\n");
+  }
+
+  const total=2+n*3, xref=len;
+  let s="xref\n0 "+(total+1)+"\n0000000000 65535 f \n";
+  for(let i=1;i<=total;i++) s+=("0000000000"+offs[i]).slice(-10)+" 00000 n \n";
+  s+="trailer\n<</Size "+(total+1)+"/Root 1 0 R>>\nstartxref\n"+xref+"\n%%EOF\n";
+  ps(s);
+
+  const out=new Uint8Array(len); let p=0;
+  for(let i=0;i<parts.length;i++){ out.set(parts[i],p); p+=parts[i].length; }
+  return out;
+}
+
+function dataUrlToBytes(u){
+  const b=atob(u.split(",")[1]);
+  const a=new Uint8Array(b.length);
+  for(let i=0;i<b.length;i++) a[i]=b.charCodeAt(i);
+  return a;
+}
+
+function makePdf(qs,plan,day,isQ,sizePref){
+  const probe=document.createElement("canvas");
+  probe.width=10; probe.height=10;
+  const pctx=probe.getContext("2d");
+  const colW=mm(90.6);
+  const max=FS_CAP[sizePref]||9.8, min=6.6;
+  const avail=mm(287)-(mm(10)+mm(13.2)+mm(8.4)+mm(2.4));
+
+  let best=null;
+  for(let fs=max; fs>=min-0.001; fs-=0.2){
+    if(measureSheet(pctx,qs,isQ,fs,colW)<=avail){ best=fs; break; }
+  }
+
+  const pages=[]; let fit=true;
+  if(best!==null){
+    const items=[];
+    for(let i=0;i<qs.length;i++) items.push({q:qs[i],idx:i,col:i<5?0:1});
+    pages.push({fs:best,items:items});
+  }else{
+    fit=false;
+    const fs=min;
+    let cur={fs:fs,items:[]}, colH=[0,0], c=0;
+    for(let i=0;i<qs.length;i++){
+      const h=qBlock(pctx,qs[i],i,isQ,0,0,colW,fs,false);
+      let extra=(colH[c]>0?mm(1.6):0);
+      if(colH[c]+extra+h>avail && colH[c]>0){
+        c++;
+        if(c>1){ pages.push(cur); cur={fs:fs,items:[]}; colH=[0,0]; c=0; }
+        extra=0;
+      }
+      cur.items.push({q:qs[i],idx:i,col:c});
+      colH[c]+=extra+h;
+    }
+    if(cur.items.length) pages.push(cur);
+  }
+
+  const jpegs=[], cv=document.createElement("canvas");
+  for(let k=0;k<pages.length;k++){
+    renderSheet(cv,{day:day,plan:plan,isQ:isQ,fs:pages[k].fs,items:pages[k].items});
+    jpegs.push({bytes:dataUrlToBytes(cv.toDataURL("image/jpeg",0.94)),w:cv.width,h:cv.height});
+  }
+  return {
+    blob:new Blob([buildPdfBytes(jpegs)],{type:"application/pdf"}),
+    pages:pages.length, fs:pages[0]?pages[0].fs:0, fit:fit
+  };
+}
+
+/* ファイルを渡す
+   ※ 保存機能の準備が終わる前に押されると失敗していたため、
+     押された時点で改めて保存機能を取りに行く。
+     保存できたかどうかを必ず確かめ、できていないのに
+     「保存しました」と出さないようにしている。 */
+let pdfBusy=false;
+
+async function getDownloads(){
+  if(S.downloads) return S.downloads;
+  if(!(window.claude&&typeof window.claude.use==="function")) return null;
+  try{ S.downloads=(await claude.use("downloads"))||null; }
+  catch(e){ S.downloads=null; }
+  return S.downloads;
+}
+
+function saveErrText(c){
+  if(c==="declined")      return "保存の確認画面でキャンセルされたか、確認画面が閉じられました。";
+  if(c==="rate_limited")  return "保存の確認画面がもう1つ開いたままか、短い間に何度も押されました。少し待ってからお試しください。";
+  if(c==="too_large")     return "ファイルが大きすぎて保存できませんでした。";
+  if(c==="bad_request"||c==="rejected_extension") return "ファイル名の形式が受け付けられませんでした。";
+  if(c==="not_granted"||c==="unavailable"||c==="capability_disabled"||c==="capability_removed")
+    return "このページにファイル保存が許可されていません。ページを開き直してお試しください。";
+  return "保存できませんでした。";
+}
+
+/* 保存できなかったときの受け皿（自分で押せるボタンを出す） */
+function showSaveLink(blob,name,note){
+  const box=msg(note);
+  if(!box) return;
+  const acts=document.createElement("div"); acts.className="acts";
+
+  const again=document.createElement("button");
+  again.textContent="もう一度保存する";
+  again.addEventListener("click",async()=>{
+    again.disabled=true; again.textContent="保存しています…";
+    try{
+      const dl=await getDownloads();
+      if(!dl) throw {code:"unavailable"};
+      const res=await dl.save({filename:name,data:blob});
+      if(!(res&&res.status)) throw {code:"unknown"};
+      msg("PDFを保存しました："+name,"info");
+    }catch(e){
+      again.disabled=false;
+      again.textContent="もう一度保存する（"+((e&&e.code)||"error")+"）";
+    }
+  });
+  acts.appendChild(again);
+
+  let url="";
+  try{ url=URL.createObjectURL(blob); }catch(e){}
+  if(url){
+    const a=document.createElement("a");
+    a.href=url; a.download=name; a.target="_blank"; a.rel="noopener";
+    a.textContent="別の方法で保存（"+name+"）";
+    acts.appendChild(a);
+    setTimeout(()=>{ try{URL.revokeObjectURL(url);}catch(e){} },600000);
+  }
+  box.appendChild(acts);
+}
+
+async function savePdf(kind){
+  if(pdfBusy) return;
+  const doc=S.days[S.day]||{questions:[]};
+  const qs=doc.questions||[];
+  if(!qs.length){ msg("先に問題を作成してください。"); return; }
+  const isQ=(kind==="q");
+  if(!isQ && !qs.every(q=>q.expl&&q.expl.lines&&q.expl.lines.length===5)){
+    msg("解答解説がまだありません。「解答解説を作成」を先に押してください。"); return;
+  }
+  const plan=planFor(S.day);
+  const name="DAY"+String(S.day).padStart(3,"0")+"_"+(isQ?"問題":"解答解説")+".pdf";
+
+  pdfBusy=true;
+  $("btnPdfQ").disabled=true; $("btnPdfA").disabled=true;
+  msg("PDFを作成しています…","info");
+
+  let blob=null;
+  try{
+    if(document.fonts&&document.fonts.ready){ try{ await document.fonts.ready; }catch(e){} }
+    await new Promise(res=>setTimeout(res,30));
+
+    const r=makePdf(qs,plan,S.day,isQ,S.size);
+    blob=r.blob;
+
+    msg("保存の確認画面で「保存」を選んでください…","info");
+    const dl=await getDownloads();
+    if(!dl){
+      showSaveLink(blob,name,"ファイル保存の準備ができていません。下のボタンから保存してください。");
+    }else{
+      const res=await dl.save({filename:name,data:blob});
+      if(res&&res.status){
+        msg("PDFを保存しました："+name+"　（"+r.pages+"ページ／文字 "+r.fs.toFixed(1)+"pt）"+
+            (r.fit?"":"　※内容が多いため2ページになりました"), r.fit?"info":null);
+      }else{
+        showSaveLink(blob,name,"保存できたか確認できませんでした。下のボタンからもう一度保存してください。");
+      }
+    }
+  }catch(e){
+    const c=(e&&e.code)||"";
+    if(blob) showSaveLink(blob,name,saveErrText(c)+(c?"（"+c+"）":""));
+    else msg("PDFを作成できませんでした。もう一度お試しください。"+(c?"（"+c+"）":""));
+  }
+  pdfBusy=false;
+  renderDay();
+}
+
+/* =========================================================
+   ■ 起動
+   ========================================================= */
+function wire(){
+  $("btnGenQ").addEventListener("click",genQuestions);
+  $("btnGenA").addEventListener("click",genExplanations);
+  $("btnPdfQ").addEventListener("click",()=>savePdf("q"));
+  $("btnPdfA").addEventListener("click",()=>savePdf("a"));
+  $("btnStop").addEventListener("click",()=>{ if(S.ctl) S.ctl.abort(); });
+  document.querySelectorAll(".sizepick button").forEach(b=>{
+    b.addEventListener("click",()=>{ S.size=b.dataset.size; localStorage.setItem("kfs-size",S.size); renderDay(); });
+  });
+  $("dayScope").textContent="DAY 1〜"+VISIBLE_DAYS;
+}
+
+async function boot(){
+  S.status=lsGet(LS_ST,{});
+  wire(); renderDayGrid();
+  await loadDay(1); renderDay();
+
+  if(!(window.claude&&typeof window.claude.use==="function")){
+    $("storeState").textContent="この端末のみに保存（AI生成は不可）";
+    return;
+  }
+  $("storeState").textContent="接続中…";
+  claude.use("sample").then(s=>{S.sample=s||null;renderDay();}).catch(()=>{});
+  claude.use("downloads").then(d=>{S.downloads=d||null;}).catch(()=>{});
+  claude.use("user").then(u=>{
+    if(u&&typeof u.can==="function"&&u.can("data.write")===false) S.canWrite=false;
+  }).catch(()=>{});
+
+  const db=await claude.use("db").catch(()=>null);
+  if(!db){ $("storeState").textContent="この端末のみに保存"; return; }
+  S.db=db;
+  $("storeState").textContent="クラウド保存（別のPCからも同じ内容）";
+  try{
+    const snap=await db.doc("meta/status").get();
+    if(snap.exists){ S.status=Object.assign({},S.status,snap.data()); lsSet(LS_ST,S.status); }
+  }catch(e){}
+  delete S.days[S.day];
+  await loadDay(S.day);
+  renderDayGrid(); renderDay();
+}
+
+boot();
+})();
+</script>
+</body>
+</html>

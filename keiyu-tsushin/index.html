@@ -1,0 +1,1399 @@
+﻿<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>けいゆうの里 月次通信</title>
+<meta charset="utf-8">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=BIZ+UDPGothic:wght@400;700&family=Zen+Maru+Gothic:wght@500;700&family=Shippori+Mincho+B1:wght@600;700&display=swap">
+<style id="page-size">@page { size: 148mm 210mm; margin: 0; }</style>
+<style>
+/* =========================================================
+   アプリ画面（操作UI）
+   ========================================================= */
+:root{
+  --bg:#F3F6F2; --surface:#FFFFFF; --surface2:#F7F9F6; --ink:#24302A; --muted:#5C6A62;
+  --line:#D9E1DA; --accent:#2F6B5E; --accent-ink:#FFFFFF; --accent-soft:#E3EFEA;
+  --warn:#9A5A14; --warn-soft:#FBF0E2; --danger:#A33A2E; --stage:#E4E9E3; --sat-ui:#2F5F9E;
+  --ui:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    color-scheme:dark;
+    --bg:#131816; --surface:#1C2320; --surface2:#222A27; --ink:#E5ECE8; --muted:#9DAAA3;
+    --line:#34403B; --accent:#86C5B3; --accent-ink:#0E1A16; --accent-soft:#223630;
+    --warn:#E3AE6B; --warn-soft:#3A2D1E; --danger:#F08A7C; --stage:#0E1210; --sat-ui:#8FB2E6;
+  }
+}
+:root[data-theme="dark"]{
+  color-scheme:dark;
+  --bg:#131816; --surface:#1C2320; --surface2:#222A27; --ink:#E5ECE8; --muted:#9DAAA3;
+  --line:#34403B; --accent:#86C5B3; --accent-ink:#0E1A16; --accent-soft:#223630;
+  --warn:#E3AE6B; --warn-soft:#3A2D1E; --danger:#F08A7C; --stage:#0E1210; --sat-ui:#8FB2E6;
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+body{background:var(--bg);color:var(--ink);font-family:var(--ui);font-size:15px;line-height:1.65;margin:0}
+.app{max-width:1360px;margin:0 auto;padding-inline:16px;padding-block:18px 60px}
+button,select,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.topbar{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 20px;margin-bottom:16px}
+.topbar h1{margin:0;font-size:1.55rem;letter-spacing:.04em;text-wrap:balance}
+.topbar .ver{display:inline-block;font-size:.72rem;font-weight:700;border:1px solid var(--accent);color:var(--accent);padding:1px 8px;border-radius:99px;margin-left:10px;vertical-align:middle;letter-spacing:.05em}
+.topbar p{margin:2px 0 0;color:var(--muted);font-size:.9rem}
+.savestate{font-size:.82rem;color:var(--muted)}
+
+.sample-note{display:flex;flex-wrap:wrap;align-items:center;gap:8px 14px;background:var(--warn-soft);border:1px solid color-mix(in srgb,var(--warn) 35%,transparent);padding:10px 14px;border-radius:10px;margin-bottom:16px;font-size:.92rem}
+.sample-note b{color:var(--warn)}
+
+.layout{display:grid;grid-template-columns:minmax(0,1fr);gap:24px}
+@media (min-width:1080px){
+  .layout{grid-template-columns:minmax(0,560px) minmax(0,1fr)}
+  .preview-col{position:sticky;top:12px;align-self:start;max-height:calc(100vh - 24px);overflow:auto}
+}
+
+.step{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:16px 16px 18px;margin-bottom:14px}
+.step-h{display:flex;align-items:baseline;flex-wrap:wrap;gap:4px 10px;margin:0 0 10px}
+.step-no{flex:none;font-size:.72rem;font-weight:700;letter-spacing:.08em;color:var(--accent-ink);background:var(--accent);padding:2px 9px;border-radius:99px}
+.step-h h2{margin:0;font-size:1.06rem}
+.step-h .pgno{font-size:.78rem;color:var(--accent);font-weight:700}
+.sub-h{margin:16px 0 8px;padding-top:12px;border-top:1px solid var(--line);font-size:.95rem;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:baseline;gap:4px 8px}
+.sub-h small{font-weight:400;color:var(--muted);font-size:.8rem}
+.hint{color:var(--muted);font-size:.84rem;margin:0 0 10px}
+.note{background:var(--warn-soft);border-radius:8px;padding:8px 12px;font-size:.84rem;margin:0 0 10px}
+.fields{display:flex;flex-direction:column;gap:10px;margin-top:10px}
+.row{display:flex;flex-wrap:wrap;gap:10px}
+.fld{display:flex;flex-direction:column;gap:4px;font-size:.84rem;color:var(--muted);min-width:0;flex:1}
+.fld > span{font-weight:700;color:var(--ink)}
+.fld em{font-style:normal;font-weight:400;color:var(--muted);font-size:.78rem;margin-left:6px}
+select,textarea,input[type=text]{background:var(--surface2);border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;font-size:.95rem}
+textarea{resize:vertical;line-height:1.6}
+.check{display:inline-flex;gap:6px;align-items:center;font-size:.84rem;cursor:pointer}
+.check input{accent-color:var(--accent);width:16px;height:16px}
+.ym{display:flex;gap:10px;align-items:flex-end}
+.ym .fld{flex:0 1 150px}
+.cnt{flex:none;font-size:.76rem;color:var(--muted);font-variant-numeric:tabular-nums;text-align:right}
+.cnt.over{color:var(--warn);font-weight:700}
+.caprow{display:flex;gap:8px;align-items:center}
+.caprow select{flex:1;font-size:.85rem;padding:6px 8px}
+
+.tpls{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.tpl{position:relative;display:flex;flex-direction:column;gap:6px;border:2px solid var(--line);border-radius:10px;padding:8px;cursor:pointer;background:var(--surface2)}
+.tpl input{position:absolute;opacity:0;pointer-events:none}
+.tpl:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.tpl:has(input:focus-visible){outline:3px solid var(--accent);outline-offset:2px}
+.tpl b{font-size:.92rem}
+.tpl small{color:var(--muted);font-size:.74rem;line-height:1.4}
+.mini{aspect-ratio:148/210;border-radius:3px;background:#FBF9F3;box-shadow:0 1px 3px rgba(0,0,0,.18);position:relative;overflow:hidden;max-width:100%}
+.mini i{position:absolute;display:block}
+.mini.natural i.c{left:0;right:0;top:0;height:72%;background:linear-gradient(160deg,#E9B98F,#C9DDB8)}
+.mini.natural i.a{left:9%;top:6%;width:52%;height:7%;background:#fff;border-radius:2px}
+.mini.natural i.b{left:9%;top:58%;width:60%;height:5%;background:#fff;border-radius:2px}
+.mini.natural i.d{left:9%;right:40%;top:80%;height:4%;background:#C9D3C5;border-radius:2px}
+.mini.johoshi{background:#fff}
+.mini.johoshi i.a{left:9%;top:4%;width:55%;height:7%;background:#2F6552}
+.mini.johoshi i.c{left:0;right:0;top:14%;height:64%;background:linear-gradient(160deg,#BFD3C8,#E9D6B8)}
+.mini.johoshi i.b{left:0;top:58%;width:62%;height:13%;background:rgba(255,255,255,.88)}
+.mini.johoshi i.d{left:9%;right:9%;top:84%;height:5%;border-top:2px solid #2F6552}
+.mini.photo i.c{left:0;right:0;top:0;height:76%;background:linear-gradient(170deg,#6E5A4A,#D9B48E 70%,#F3E1C6)}
+.mini.photo i.a{left:22%;right:22%;top:6%;height:7%;background:rgba(255,255,255,.92)}
+.mini.photo i.b{left:9%;top:62%;width:55%;height:5%;background:rgba(255,255,255,.9)}
+.mini.photo i.d{left:9%;right:30%;top:84%;height:4%;background:#CFC4B8}
+
+/* 写真スロット */
+.slot,.litem{display:grid;grid-template-columns:132px minmax(0,1fr);gap:12px}
+.litem{padding:12px 0;border-top:1px solid var(--line)}
+.litem:first-child{border-top:0;padding-top:2px}
+@media (max-width:480px){.slot,.litem{grid-template-columns:minmax(0,1fr)}}
+.pimg{display:flex;flex-direction:column;gap:6px;align-items:flex-start}
+.focus{position:relative;display:inline-block;cursor:crosshair;line-height:0;border-radius:6px;overflow:hidden;background:var(--surface2);max-width:100%}
+.focus img{max-width:100%;max-height:150px;width:auto;height:auto;display:block}
+.dot{position:absolute;width:18px;height:18px;margin:-9px 0 0 -9px;border:2px solid #fff;border-radius:50%;box-shadow:0 0 0 2px rgba(0,0,0,.45);pointer-events:none}
+.dot::after{content:"";position:absolute;inset:5px;background:#fff;border-radius:50%}
+.focus-help{font-size:.72rem;color:var(--muted);line-height:1.4}
+.pbtns{display:flex;flex-wrap:wrap;gap:4px}
+.btn-s{border:1px solid var(--line);background:var(--surface2);border-radius:6px;padding:3px 8px;font-size:.78rem;cursor:pointer}
+.btn-s:hover:not(:disabled){border-color:var(--accent)}
+.btn-s:disabled{opacity:.4;cursor:default}
+.btn-s.danger{color:var(--danger)}
+.btn-s.confirm{background:var(--danger);color:#fff;border-color:var(--danger)}
+.pform{display:flex;flex-direction:column;gap:8px;min-width:0}
+.empty-slot{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;border:2px dashed var(--line);border-radius:10px;padding:22px 12px;text-align:center;color:var(--muted);font-size:.88rem}
+.adder{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:8px}
+.btn{border:1px solid var(--accent);background:var(--surface);color:var(--accent);border-radius:8px;padding:8px 14px;font-weight:700;cursor:pointer}
+.btn:hover:not(:disabled){background:var(--accent-soft)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.primary{background:var(--accent);color:var(--accent-ink)}
+.btn.primary:hover:not(:disabled){filter:brightness(1.07);background:var(--accent)}
+.btn.big{width:100%;padding:15px;font-size:1.1rem;border-radius:10px}
+.count{font-size:.84rem;color:var(--muted);font-variant-numeric:tabular-nums}
+
+.radios{display:flex;flex-direction:column;gap:8px}
+.radio{display:flex;gap:10px;align-items:flex-start;border:1px solid var(--line);border-radius:8px;padding:9px 12px;cursor:pointer;background:var(--surface2);font-size:.88rem}
+.radio:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.radio input{margin-top:5px;accent-color:var(--accent)}
+.radio b{color:var(--accent);margin-right:4px}
+.foot-tools{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;margin-top:10px;font-size:.84rem;color:var(--muted)}
+.rec-tools{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;margin:12px 0 6px}
+.rec-list{display:flex;flex-direction:column;border:1px solid var(--line);border-radius:10px;overflow:hidden}
+.rrow{display:grid;grid-template-columns:7.6em minmax(0,1fr) auto;align-items:center;gap:8px;padding:5px 10px;border-top:1px solid var(--line)}
+.rrow:first-child{border-top:0}
+.rrow label{font-variant-numeric:tabular-nums;font-weight:700;font-size:.9rem;line-height:1.2;color:var(--ink)}
+.rrow label small{display:block;font-weight:400;font-size:.7rem;color:var(--danger)}
+.rrow.sun label,.rrow.hol label{color:var(--danger)}
+.rrow.sat:not(.hol) label{color:var(--sat-ui)}
+.rrow.sun,.rrow.hol{background:color-mix(in srgb,var(--danger) 6%,transparent)}
+.rrow.sat:not(.hol){background:color-mix(in srgb,var(--sat-ui) 6%,transparent)}
+.rrow input{padding:6px 9px}
+.rrow .btn-s{white-space:nowrap}
+@media (max-width:480px){.rrow{grid-template-columns:6.4em minmax(0,1fr)}.rrow .btn-s{grid-column:2;justify-self:end}}
+.linkbtn{background:none;border:0;color:var(--danger);text-decoration:underline;cursor:pointer;padding:0;font-size:.84rem}
+
+/* プレビュー */
+.pv{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:14px}
+.pv-h{display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px}
+.pv-h h2{margin:0;font-size:1.06rem}
+.tabs{display:flex;flex-wrap:wrap;gap:4px}
+.tab{border:1px solid var(--line);background:var(--surface2);border-radius:7px;padding:5px 11px;font-size:.84rem;cursor:pointer;font-weight:700}
+.tab[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.tab.sep{margin-left:8px}
+.stale{display:flex;flex-wrap:wrap;gap:8px 12px;align-items:center;background:var(--accent-soft);border-radius:8px;padding:8px 12px;margin-bottom:10px;font-size:.88rem}
+.stage{background:var(--stage);border-radius:10px;padding:18px;display:flex;flex-wrap:wrap;gap:18px;justify-content:center;min-height:200px}
+.pv-empty{color:var(--muted);text-align:center;align-self:center;padding:40px 10px}
+.frame-wrap{display:flex;flex-direction:column;gap:6px;align-items:center}
+.frame-label{font-size:.8rem;color:var(--muted);font-weight:700}
+.frame{position:relative;overflow:hidden;box-shadow:0 2px 10px rgba(0,0,0,.18);background:#fff;flex:none}
+.frame > .scaler{position:absolute;left:0;top:0;transform-origin:0 0}
+.sheet{width:297mm;height:210mm;display:flex;position:relative;background:#fff}
+.sheet .fold{position:absolute;left:50%;top:0;bottom:0;border-left:1px dashed rgba(0,0,0,.28);pointer-events:none}
+.printbar{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.printbar .btn{flex:1 1 200px}
+.printguide{margin-top:12px;border:1px solid var(--line);border-radius:10px;padding:12px 14px;font-size:.85rem;background:var(--surface2)}
+.printguide h3{margin:0 0 6px;font-size:.92rem}
+.printguide ol{margin:0;padding-left:1.3em}
+.printguide .inframe{background:var(--warn-soft);border-radius:8px;padding:8px 10px;margin-bottom:10px}
+.printguide .inframe b{color:var(--warn)}
+.warnlist{margin:8px 0 0;padding-left:1.2em;color:var(--warn);font-size:.84rem}
+
+#print-root{position:fixed;left:-99999px;top:0;pointer-events:none}
+@media (prefers-reduced-motion: reduce){*{transition:none!important;animation:none!important}}
+
+/* =========================================================
+   紙面（mm単位・紙なので常に明るい色）
+   ========================================================= */
+.page{
+  width:148mm;height:210mm;position:relative;overflow:hidden;
+  background:var(--paper);color:var(--ink);font-family:var(--fb);
+  font-size:9.5pt;line-height:1.65;-webkit-print-color-adjust:exact;print-color-adjust:exact;
+  --fb:"BIZ UDPGothic","Hiragino Kaku Gothic ProN","Yu Gothic","Meiryo",sans-serif;
+  --pad:10mm;
+}
+.page *{box-sizing:border-box}
+.page h1,.page h2,.page h3,.page p,.page figure,.page blockquote,.page ul{margin:0;padding:0}
+.page ul{list-style:none}
+.ph{position:relative;overflow:hidden;background:var(--tint);min-height:0}
+.ph img{width:100%;height:100%;object-fit:cover;display:block}
+.ph.empty{display:flex;align-items:center;justify-content:center;color:var(--sub);font-size:9pt}
+.clamp2,.clamp3,.clamp4{display:-webkit-box;-webkit-box-orient:vertical;overflow:hidden}
+.clamp2{-webkit-line-clamp:2}.clamp3{-webkit-line-clamp:3}.clamp4{-webkit-line-clamp:4}
+.pg{display:grid}
+.page.pg > *{margin-inline:var(--pad)}
+.page.pg > .bleed{margin-inline:0}
+.pfoot{display:flex;justify-content:space-between;align-items:center;font-size:7pt;color:var(--sub);padding:2.4mm 0 6mm;border-top:.25mm solid var(--rule)}
+.folio{font-weight:700;color:var(--acc);font-size:8.5pt}
+
+/* 見出し（P2〜P4） */
+.sec{display:grid;grid-template-columns:1fr auto;align-items:end;gap:0 4mm;padding-top:9mm;margin-bottom:5mm}
+.sec-eyebrow{grid-column:1;font-size:9pt;font-weight:700;letter-spacing:.16em;color:var(--acc)}
+.sec-title{grid-column:1;font-family:var(--fd);font-weight:700;font-size:24pt;line-height:1.2;letter-spacing:.03em}
+.sec-meta{grid-column:2;grid-row:1/3;font-size:8pt;color:var(--sub);text-align:right;line-height:1.4;padding-bottom:1.2mm}
+
+/* ---------- P1 表紙 ---------- */
+.p1 > *{position:absolute}
+.cv-photo{inset:0 0 58mm 0}
+.cv-shade-top{left:0;right:0;top:0;height:48mm;background:linear-gradient(rgba(20,26,22,.46),rgba(20,26,22,0));pointer-events:none}
+.cv-shade-bot{left:0;right:0;bottom:58mm;height:62mm;background:linear-gradient(rgba(20,26,22,0),rgba(20,26,22,.58));pointer-events:none}
+.cv-mast{left:9mm;right:9mm;top:8mm;color:#fff;display:grid;grid-template-columns:1fr auto;align-items:start;gap:0 4mm}
+.cv-logo{font-family:var(--fd);font-weight:700;font-size:34pt;line-height:1.1;letter-spacing:.06em;text-shadow:0 .3mm 2mm rgba(0,0,0,.25)}
+.cv-kicker{font-size:8.5pt;letter-spacing:.2em;margin-top:1.5mm;opacity:.95}
+.cv-issue{text-align:right;font-size:9.5pt;font-weight:700;line-height:1.45;padding-top:1.5mm;letter-spacing:.04em}
+.cv-issue small{display:block;font-weight:400;font-size:7.5pt;letter-spacing:.2em;opacity:.9}
+.cv-head{left:9mm;right:14mm;bottom:65mm;color:#fff;text-shadow:0 .3mm 1.8mm rgba(0,0,0,.3)}
+.cv-title{font-family:var(--fd);font-weight:700;font-size:22pt;line-height:1.3;letter-spacing:.03em}
+.cv-sub{font-size:10pt;line-height:1.55;margin-top:2mm}
+.cv-foot{left:9mm;right:9mm;bottom:0;height:58mm;display:grid;grid-template-columns:1.1fr 1fr;grid-template-rows:1fr auto;gap:0 6mm;padding-top:6mm}
+.cv-cap{font-size:10pt;line-height:1.75}
+.cv-cap::before{content:"";display:block;width:10mm;height:.6mm;background:var(--acc);margin-bottom:2.5mm}
+.cv-toc{display:flex;flex-direction:column}
+.cv-toc li{display:grid;grid-template-columns:8mm 1fr;gap:1mm;padding:1.6mm 0;border-bottom:.25mm solid var(--rule);font-size:8.5pt;line-height:1.45}
+.cv-toc li:first-child{border-top:.25mm solid var(--rule)}
+.cv-toc b{color:var(--acc);font-size:8pt}
+.cv-toc span small{display:block;color:var(--sub);font-size:7.5pt}
+.cv-fac{grid-column:1/-1;align-self:end;display:flex;justify-content:space-between;font-size:7pt;color:var(--sub);padding:2mm 0 6mm}
+
+/* ---------- P2 今月の1枚 ---------- */
+.p2{grid-template-rows:auto var(--ft-h) auto minmax(0,1fr) auto}
+.p2.nosub{grid-template-rows:auto minmax(0,1fr) auto auto}
+.ft-photo{position:relative;min-height:0}
+.ft-photo .ph{position:absolute;inset:0}
+.ft-overlay{position:absolute;left:0;right:0;bottom:0;padding:16mm var(--pad) 4.5mm;background:linear-gradient(rgba(20,26,22,0),rgba(20,26,22,.62));color:#fff}
+.ft-title{font-family:var(--fd);font-weight:700;font-size:17pt;line-height:1.35;text-shadow:0 .3mm 1.5mm rgba(0,0,0,.3)}
+.ft-text{display:grid;grid-template-columns:1fr 1fr;gap:7mm;padding-block:5mm 5mm}
+.ft-text.one{grid-template-columns:1fr}
+.ft-cap{font-size:10pt;line-height:1.8}
+.ft-comment{position:relative;padding-top:1mm}
+.ft-who{display:block;font-size:8.5pt;font-weight:700;color:var(--acc);letter-spacing:.1em;margin-bottom:1mm}
+.ft-who::before{content:"“";font-family:Georgia,serif;font-size:22pt;line-height:0;vertical-align:-3.2mm;margin-right:1.5mm}
+.ft-comment p{font-size:9.5pt;line-height:1.75}
+.ft-subs{display:grid;gap:3mm;min-height:0;margin-bottom:4mm}
+.ft-subs.n1{grid-template-columns:1fr}
+.ft-subs.n2{grid-template-columns:1.4fr 1fr}
+.ft-subs.n3{grid-template-columns:1.55fr 1fr 1fr}
+/* 4〜6枚：2段構成。先頭を大きく、段ごとに幅を変えてリズムをつける */
+.p2.many{grid-template-rows:auto var(--ft-h-many) auto minmax(0,1fr) auto}
+.p2.many .ft-text{padding-block:4mm 4mm}
+.p2.many .ft-cap,.p2.many .ft-comment p{-webkit-line-clamp:3}
+.ft-subs.n4,.ft-subs.n5{grid-template-columns:1.45fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:2.5mm 3mm}
+.ft-subs.n4 .sfig:nth-child(1),.ft-subs.n5 .sfig:nth-child(1){grid-row:1/3}
+.ft-subs.n4 .sfig:nth-child(4){grid-column:2/4}
+.ft-subs.n6{grid-template-columns:repeat(12,1fr);grid-template-rows:1fr 1fr;gap:2.5mm 3mm}
+.ft-subs.n6 .sfig:nth-child(1),.ft-subs.n6 .sfig:nth-child(6){grid-column:span 5}
+.ft-subs.n6 .sfig:nth-child(2),.ft-subs.n6 .sfig:nth-child(5){grid-column:span 4}
+.ft-subs.n6 .sfig:nth-child(3),.ft-subs.n6 .sfig:nth-child(4){grid-column:span 3}
+.ft-subs.n4 figcaption,.ft-subs.n5 figcaption,.ft-subs.n6 figcaption{-webkit-line-clamp:1;margin-top:1.1mm}
+.ft-subs.n4 .sfig:nth-child(1) figcaption,.ft-subs.n5 .sfig:nth-child(1) figcaption{-webkit-line-clamp:2}
+.sfig{display:flex;flex-direction:column;min-height:0;min-width:0}
+.sfig .ph{flex:1}
+.sfig figcaption{flex:none;margin-top:1.6mm;font-size:8pt;line-height:1.5}
+
+/* ---------- P3 今月の誕生日の人 ---------- */
+.p3{grid-template-rows:auto minmax(0,1fr) auto auto auto;
+  background-color:var(--paper);
+  background-image:
+    radial-gradient(circle at 96% 3%, color-mix(in srgb,var(--mc) 17%,transparent) 0 30mm, transparent 30.3mm),
+    radial-gradient(circle at 2% 70%, color-mix(in srgb,var(--mc) 9%,transparent) 0 22mm, transparent 22.3mm);}
+.p3 .sec{margin-bottom:2mm}
+.p3 .sec-eyebrow{color:var(--mc)}
+.bd-season{display:inline-flex;align-items:center;gap:1.6mm}
+.bd-season::before{content:"";width:2.4mm;height:2.4mm;border-radius:50%;background:var(--mc)}
+.bd-msg{grid-column:1/-1;font-family:var(--fd);font-size:9.8pt;line-height:1.7;margin-top:2mm;max-width:118mm}
+.bd-people{display:flex;flex-wrap:wrap;justify-content:center;align-content:center;gap:4mm 6mm;min-height:0;padding-block:3mm}
+.bd-p{width:var(--cw);display:flex;flex-direction:column;align-items:center;text-align:center;--c:40mm;--cw:44mm}
+.bd-ph{width:var(--c);height:var(--c);border-radius:50%;flex:none;box-shadow:0 0 0 1.1mm var(--paper),0 0 0 1.6mm var(--mc)}
+.bd-p figcaption{margin-top:3.2mm;display:flex;flex-direction:column;gap:.6mm;max-width:100%}
+.bd-name{font-family:var(--fd);font-weight:700;font-size:10.5pt;line-height:1.35}
+.bd-com{font-size:8.5pt;line-height:1.55;color:var(--sub)}
+.bd-people.n1 .bd-p{--c:64mm;--cw:96mm}
+.bd-people.n1 .bd-name{font-size:12pt}
+.bd-people.n1 .bd-com{font-size:9.5pt}
+.bd-people.n2 .bd-p{--c:48mm;--cw:56mm}
+.bd-people.n2 .bd-p:nth-child(2){margin-top:16mm}
+.bd-people.n3{gap:4mm 4mm}
+.bd-people.n3 .bd-p{--c:34mm;--cw:37mm}
+.bd-people.n3 .bd-p:nth-child(2){--c:43mm;--cw:46mm}
+.bd-people.n3 .bd-p:nth-child(odd){margin-top:12mm}
+.bd-people.n4{display:grid;grid-template-columns:1fr 1fr;gap:5mm 6mm;align-content:center}
+.bd-people.n4 .bd-p{--c:31mm;width:auto;flex-direction:row;align-items:center;text-align:left;gap:4mm}
+.bd-people.n4 .bd-p figcaption{margin-top:0}
+.bd-people.n4 .bd-p:nth-child(even){margin-top:9mm}
+.bd-people.n5 .bd-p,.bd-people.n6 .bd-p{--c:30mm;--cw:38mm}
+.bd-people.n5 .bd-p:nth-child(2),.bd-people.n6 .bd-p:nth-child(2),.bd-people.n6 .bd-p:nth-child(5){margin-top:7mm}
+.bd-empty{margin:auto;text-align:center;font-family:var(--fd);font-size:11pt;color:var(--sub)}
+.bd-daily{background:var(--tint);padding:4mm var(--pad) 4.5mm;display:grid;gap:2.5mm 3mm;grid-template-rows:auto 27mm auto}
+.bd-daily.n1{grid-template-columns:62mm 1fr;grid-template-rows:auto 30mm}
+.bd-daily.n2{grid-template-columns:1.35fr 1fr}
+.bd-daily.n3{grid-template-columns:1.4fr 1fr 1fr}
+.bd-dlabel{grid-column:1/-1;font-size:8.5pt;font-weight:700;letter-spacing:.14em;color:var(--acc)}
+.bd-daily .ph{grid-row:2}
+.bd-daily .dcap{grid-row:3;font-size:8pt;line-height:1.5}
+.bd-daily.n1 .dcap{grid-row:2;grid-column:2;align-self:center;font-size:9pt}
+/* 4〜6枚：写真の上に短い説明を重ねて、帯の高さを抑える */
+.bd-daily.n4{grid-template-columns:1.35fr 1fr 1fr 1fr;grid-template-rows:auto 25mm;padding-block:3.5mm 4mm}
+.bd-daily.n5,.bd-daily.n6{grid-template-columns:repeat(12,1fr);grid-template-rows:auto 19mm 19mm;gap:2mm 2.5mm;padding-block:3.5mm 4mm}
+.bd-daily.n5 .dfig:nth-child(2),.bd-daily.n6 .dfig:nth-child(2),.bd-daily.n6 .dfig:nth-child(7){grid-column:span 5}
+.bd-daily.n5 .dfig:nth-child(3),.bd-daily.n6 .dfig:nth-child(3),.bd-daily.n6 .dfig:nth-child(6){grid-column:span 4}
+.bd-daily.n5 .dfig:nth-child(4),.bd-daily.n6 .dfig:nth-child(4),.bd-daily.n6 .dfig:nth-child(5){grid-column:span 3}
+.bd-daily.n5 .dfig:nth-child(5),.bd-daily.n5 .dfig:nth-child(6){grid-column:span 6}
+.dfig{position:relative;min-height:0;min-width:0}
+.dfig .ph{position:absolute;inset:0}
+.dov{position:absolute;left:0;right:0;bottom:0;padding:3.5mm 2mm 1.3mm;background:linear-gradient(rgba(20,26,22,0),rgba(20,26,22,.6));color:#fff;font-size:8pt;line-height:1.35;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+/* 補助写真が多いときは、誕生日の方の丸写真を少しだけ小さく */
+.dmany .bd-people.n1 .bd-p{--c:56mm}
+.dmany .bd-people.n2 .bd-p{--c:44mm}
+.dmany .bd-people.n4 .bd-p{--c:28mm}
+.dmany .bd-people.n5 .bd-p,.dmany .bd-people.n6 .bd-p{--c:27mm;--cw:36mm}
+.p3 .pfoot{border-top:0}
+
+/* P3 下部：主任からの短いメッセージ（横長カード） */
+.bd-card{display:grid;grid-template-columns:auto 1fr;gap:4mm;align-items:center;margin-top:3.5mm;padding:2.6mm 4.5mm;border:.3mm solid var(--rule);border-radius:var(--cr);background:var(--paper)}
+.bd-card-l{font-size:8.5pt;font-weight:700;color:var(--acc);letter-spacing:.12em;padding-right:4mm;border-right:.3mm solid var(--rule);white-space:nowrap;line-height:1.3}
+.bd-card-t{font-size:8.8pt;line-height:1.6}
+/* 主任カードや補助写真が多いときは、丸写真を少しだけ小さく */
+.pmsg .bd-people.n1 .bd-p{--c:56mm}
+.pmsg .bd-people.n2 .bd-p{--c:44mm}
+.pmsg .bd-people.n3 .bd-p{--c:32mm;--cw:35mm}
+.pmsg .bd-people.n3 .bd-p:nth-child(2){--c:40mm;--cw:42mm}
+.pmsg .bd-people.n4 .bd-p{--c:28mm}
+.pmsg .bd-people.n5 .bd-p,.pmsg .bd-people.n6 .bd-p{--c:27mm;--cw:36mm}
+.tight .bd-people{padding-block:1mm;gap:3mm 6mm}
+.tight .bd-people.n1 .bd-p{--c:48mm}
+.tight .bd-people.n2 .bd-p{--c:38mm}
+.tight .bd-people.n2 .bd-p:nth-child(2){margin-top:10mm}
+.tight .bd-people.n3 .bd-p{--c:29mm;--cw:34mm}
+.tight .bd-people.n3 .bd-p:nth-child(2){--c:35mm;--cw:38mm}
+.tight .bd-people.n3 .bd-p:nth-child(odd){margin-top:8mm}
+.tight .bd-people.n4 .bd-p{--c:24mm}
+.tight .bd-people.n4 .bd-p:nth-child(even){margin-top:5mm}
+.tight .bd-people.n5 .bd-p,.tight .bd-people.n6 .bd-p{--c:23mm;--cw:36mm}
+.tight .bd-people.n5 .bd-p:nth-child(2),.tight .bd-people.n6 .bd-p:nth-child(2),.tight .bd-people.n6 .bd-p:nth-child(5){margin-top:4mm}
+.tight .bd-p figcaption{margin-top:2mm}
+.tight .bd-com{-webkit-line-clamp:1}
+
+/* ---------- P4 デイケア レクリエーション予定 ---------- */
+.page{--sun:#B5433A;--sat:#35629E}
+.p4.rc{display:grid;grid-template-rows:auto minmax(0,1fr) auto auto;padding:7.5mm 8mm 0}
+.rc-head{display:grid;grid-template-columns:1fr 34mm;align-items:end;gap:3mm;padding-bottom:2.2mm;margin-bottom:3mm;border-bottom:.35mm solid var(--rule)}
+.rc-era{display:block;font-size:10pt;font-weight:700;color:var(--acc);letter-spacing:.1em;line-height:1.2}
+.rc-title{display:flex;align-items:baseline;flex-wrap:wrap;gap:0 3mm;font-family:var(--fd);font-weight:700;line-height:1.15}
+.rc-m{font-size:32pt;letter-spacing:.02em}
+.rc-m small{font-size:17pt;margin-left:.5mm}
+.rc-name{font-size:14.5pt;letter-spacing:.04em}
+.rc-deco svg{display:block;width:100%;height:17mm}
+.rc-cal{display:grid;grid-template-columns:repeat(7,minmax(0,1fr));gap:.3mm;background:var(--rule);border:.3mm solid var(--rule);min-height:0}
+.rc-wd{background:var(--tint);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:9.5pt;letter-spacing:.1em}
+.rc-wd.sun{color:var(--sun)} .rc-wd.sat{color:var(--sat)}
+.rc-d{background:#fff;display:flex;flex-direction:column;align-items:center;padding:1mm .7mm 1.1mm;min-height:0;min-width:0;overflow:hidden}
+.t-natural .rc-d,.t-photo .rc-d{background:var(--paper)}
+.rc-n{flex:none;font-size:12.5pt;font-weight:700;line-height:1.15;font-variant-numeric:tabular-nums}
+.rc-d.sun .rc-n,.rc-d.hol .rc-n{color:var(--sun)}
+.rc-d.sat:not(.hol) .rc-n{color:var(--sat)}
+.rc-h{flex:none;font-size:6.2pt;color:var(--sun);line-height:1.25;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis}
+.rc-t{flex:1;min-height:0;width:100%;display:flex;flex-direction:column;justify-content:center;text-align:center;font-size:9pt;line-height:1.28;overflow:hidden}
+.rc-t span{display:block}
+.rc-t.s2{font-size:7.8pt}
+.rc-t.s3{font-size:8pt;word-break:break-all}
+.rc-blank{background:var(--tint);display:flex;align-items:center;justify-content:center;padding:1.2mm;min-height:0;overflow:hidden}
+.rc-blank svg{width:100%;height:100%;display:block}
+.rc-notes{padding:2.8mm .5mm 0;font-size:8pt;line-height:1.6}
+.rc-notes li{padding-left:1em;text-indent:-1em}
+.rc-notes li::before{content:"・"}
+.rc-strong{margin-top:1.6mm;font-weight:700;font-size:9pt;line-height:1.55;color:var(--sun)}
+.rc-foot{display:flex;align-items:center;gap:4mm;font-size:8.2pt;padding:2mm 0 5mm;margin-top:2.4mm;border-top:.25mm solid var(--rule)}
+.rc-foot b{font-weight:700;letter-spacing:.03em}
+.rc-foot .folio{margin-left:auto}
+
+/* ---------- テンプレート① ナチュラル（アイボリー × 淡いグリーン） ---------- */
+.t-natural{
+  --paper:#FBF9F3;--ink:#333D37;--sub:#6A756D;--acc:#5A8767;--tint:#EFF2E8;--rule:#DEE3D6;--green:#5A8767;
+  --fd:"Zen Maru Gothic","Hiragino Maru Gothic ProN","BIZ UDPGothic",sans-serif;--cr:3mm;--ft-h:86mm;--ft-h-many:74mm;
+}
+
+/* ---------- テンプレート② 地域情報誌（白 × 深いグリーン、整理された構成） ---------- */
+.t-johoshi{
+  --paper:#FFFFFF;--ink:#25302B;--sub:#63706A;--acc:#2F6552;--tint:#F1F5F0;--rule:#D3DDD6;--green:#2F6552;
+  --fd:"BIZ UDPGothic","Hiragino Kaku Gothic ProN",sans-serif;--cr:0;--ft-h:80mm;--ft-h-many:69mm;
+}
+.t-johoshi .cv-photo{inset:30mm 0 46mm 0}
+.t-johoshi .cv-shade-top,.t-johoshi .cv-shade-bot{display:none}
+.t-johoshi .cv-mast{top:0;left:9mm;right:9mm;height:30mm;color:var(--acc);align-items:center;border-bottom:1.4mm solid var(--acc)}
+.t-johoshi .cv-logo{font-size:30pt;text-shadow:none}
+.t-johoshi .cv-kicker{color:var(--sub)}
+.t-johoshi .cv-issue{color:var(--ink);border-left:.3mm solid var(--rule);padding-left:4mm}
+.t-johoshi .cv-issue small{color:var(--sub)}
+.t-johoshi .cv-head{left:0;right:auto;max-width:112mm;bottom:54mm;background:rgba(255,255,255,.88);color:var(--ink);text-shadow:none;padding:4.5mm 7mm 4.5mm 9mm}
+.t-johoshi .cv-title{font-size:19pt;color:var(--acc)}
+.t-johoshi .cv-foot{height:46mm;padding-top:5mm}
+.t-johoshi .cv-cap::before{display:none}
+.t-johoshi .sec{border-bottom:.5mm solid var(--acc);padding-bottom:3mm}
+.t-johoshi .sec-eyebrow{justify-self:start;background:var(--acc);color:#fff;padding:.4mm 2.2mm;letter-spacing:.1em;margin-bottom:1.5mm}
+.t-johoshi.p3 .sec-eyebrow{background:var(--mc);color:#fff}
+.t-johoshi .sec-title{font-size:21pt}
+.page.t-johoshi .ft-photo{margin-inline:var(--pad)}
+.t-johoshi .ft-overlay{left:0;right:auto;max-width:90%;padding:3.5mm 6mm;background:rgba(255,255,255,.9);color:var(--ink)}
+.t-johoshi .ft-title{text-shadow:none;color:var(--acc);font-size:15pt}
+.page.pg.t-johoshi .contact{margin-inline:0;padding-inline:10mm;margin-bottom:0}
+.t-johoshi.p4 .pfoot{border-top:0}
+
+/* ---------- テンプレート③ フォト（写真をより大きく・明朝） ---------- */
+.t-photo{
+  --paper:#FAF8F3;--ink:#2C2A26;--sub:#736C62;--acc:#62805A;--tint:#EEEDE4;--rule:#DCD8CC;--green:#4F6B48;
+  --fd:"Shippori Mincho B1","Hiragino Mincho ProN","Yu Mincho",serif;--cr:0;--ft-h:98mm;--ft-h-many:84mm;--pad:8mm;
+}
+.t-photo .cv-photo{inset:0 0 52mm 0}
+.t-photo .cv-shade-bot{bottom:52mm}
+.t-photo .cv-mast{grid-template-columns:1fr;text-align:center;justify-items:center}
+.t-photo .cv-logo{font-size:36pt;letter-spacing:.14em}
+.t-photo .cv-issue{text-align:center;padding-top:1mm}
+.t-photo .cv-head{bottom:59mm}
+.t-photo .cv-title{font-size:23pt}
+.t-photo .cv-foot{height:52mm;padding-top:5mm;left:8mm;right:8mm}
+.t-photo .sec-title{font-size:25pt}
+.t-photo .ft-title{font-size:18pt}
+.t-photo .ft-subs{gap:2mm}
+.t-photo .bd-ph{box-shadow:0 0 0 1mm var(--paper),0 0 0 1.4mm var(--mc)}
+
+/* =========================================================
+   印刷
+   ========================================================= */
+@media print{
+  html,body{background:#fff!important;margin:0!important;padding:0!important}
+  :root{padding:0!important}
+  body > *:not(#print-root){display:none!important}
+  #print-root{position:static!important;left:auto!important}
+  #print-root > .page, #print-root > .sheet{break-after:page;page-break-after:always}
+  #print-root > :last-child{break-after:auto;page-break-after:auto}
+  #print-root .sheet .fold{display:none}
+}
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+  <header class="topbar">
+    <div>
+      <h1>けいゆう通信 作成<span class="ver">Ver.2.0</span></h1>
+      <p>デイケアのご家族向け月次通信。写真と短い文章を入れるだけで、A5・4ページの冊子ができあがります。</p>
+    </div>
+    <div class="savestate" id="savestate" aria-live="polite"></div>
+  </header>
+
+  <div class="sample-note" id="sample-note" hidden>
+    <span><b>いまはサンプルが入っています。</b>写真はイラストの見本、お名前は架空です。差し替えたり、消してから始めたりできます。</span>
+    <button type="button" class="btn" id="clear-sample">サンプルを消して始める</button>
+  </div>
+
+  <div class="layout">
+    <form class="form-col" id="form" autocomplete="off">
+      <section class="step">
+        <div class="step-h"><span class="step-no">STEP 1</span><h2>年月を選ぶ</h2></div>
+        <div class="ym">
+          <label class="fld"><span>年</span><select id="year"></select></label>
+          <label class="fld"><span>月</span><select id="month"></select></label>
+        </div>
+      </section>
+
+      <section class="step">
+        <div class="step-h"><span class="step-no">STEP 2</span><h2>デザインを選ぶ</h2></div>
+        <p class="hint">4ページの構成は同じで、見た目だけが変わります。変えても入力した内容は消えません。</p>
+        <div class="tpls" id="tpls"></div>
+      </section>
+
+      <section class="step">
+        <div class="step-h"><span class="step-no">STEP 3</span><h2>表紙</h2><span class="pgno">P1</span></div>
+        <p class="hint">表紙写真はページの約7割に大きく載り、タイトルは写真の上に重なります。空や壁など、文字を置ける余白がある写真が向いています。</p>
+        <div id="slot-cover"></div>
+        <div class="fields">
+          <label class="fld"><span>表紙メインタイトル<em>写真の上に大きく載ります（16文字くらいまで）</em></span>
+            <input type="text" id="cover-title" data-path="cover.title" maxlength="28"></label>
+          <label class="fld"><span>表紙サブタイトル<em>30文字くらいまで</em></span>
+            <input type="text" id="cover-subtitle" data-path="cover.subtitle" maxlength="40"></label>
+          <div class="fld capwrap"><label class="fld"><span>表紙用の短いキャプション<em>写真の下に載ります</em></span>
+            <textarea id="cover-caption" data-path="cover.caption" rows="2" maxlength="90" data-soft="60"></textarea></label>
+            <span class="cnt"></span></div>
+        </div>
+      </section>
+
+      <section class="step">
+        <div class="step-h"><span class="step-no">STEP 4</span><h2>デイケアスタッフが選ぶ 今月の1枚</h2><span class="pgno">P2</span></div>
+        <p class="hint">一番伝えたい写真を1枚。ページ幅いっぱいに載り、写真タイトルが写真の上に重なります。</p>
+        <div id="slot-feature"></div>
+        <div class="fields">
+          <label class="fld"><span>写真タイトル<em>20文字くらいまで</em></span>
+            <input type="text" id="feature-title" data-path="feature.title" maxlength="30"></label>
+          <div class="fld capwrap"><label class="fld"><span>キャプション<em>どんな場面か、短く</em></span>
+            <textarea id="feature-caption" data-path="feature.caption" rows="2" maxlength="100" data-soft="70"></textarea></label>
+            <div class="caprow"><select class="phrase" id="feature-phrase" aria-label="定型文から選ぶ"></select><span class="cnt"></span></div></div>
+          <div class="fld capwrap"><label class="fld"><span>スタッフコメント<em>その時の様子や、スタッフが感じたこと</em></span>
+            <textarea id="feature-comment" data-path="feature.comment" rows="3" maxlength="120" data-soft="90"></textarea></label>
+            <span class="cnt"></span></div>
+        </div>
+        <h3 class="sub-h">関連するサブ写真<small>3〜6枚がおすすめ（最大6枚）。枚数に合わせて大きさが自動で変わります</small></h3>
+        <div id="list-subs"></div>
+        <div class="adder"><button type="button" class="btn" data-act="add" data-list="subs">＋ サブ写真を追加</button><span class="count" data-count="subs"></span></div>
+      </section>
+
+      <section class="step">
+        <div class="step-h"><span class="step-no">STEP 5</span><h2>今月の誕生日の人</h2><span class="pgno">P3</span></div>
+        <p class="note">お名前・お写真は、ご本人・ご家族から掲載の許可をいただいた方だけ載せてください。お名前を出さない場合は「名前を載せない」にチェックを入れます。</p>
+        <div id="list-people"></div>
+        <div class="adder"><button type="button" class="btn primary" data-act="add" data-list="people">＋ 誕生日の方を追加（まとめて選べます）</button><span class="count" data-count="people"></span></div>
+        <div class="fields">
+          <div class="fld capwrap"><label class="fld"><span>お祝いのことば<em>見出しの下に載ります</em></span>
+            <textarea id="bday-greeting" data-path="bday.greeting" rows="2" maxlength="80" data-soft="60"></textarea></label>
+            <span class="cnt"></span></div>
+        </div>
+        <h3 class="sub-h">主任より<small>ページ下の小さなカードに載ります</small></h3>
+        <div class="fld capwrap"><label class="fld"><span>主任からの短いメッセージ<em>2〜3行・90文字くらいまで</em></span>
+          <textarea id="message" data-path="message" rows="3" maxlength="150" data-soft="90"></textarea></label>
+          <span class="cnt"></span></div>
+        <h3 class="sub-h">日常のひとコマ（補助写真）<small>任意・3〜6枚がおすすめ（最大6枚）。ページ下の帯に載ります</small></h3>
+        <div id="list-daily"></div>
+        <div class="adder"><button type="button" class="btn" data-act="add" data-list="daily">＋ 日常の写真を追加</button><span class="count" data-count="daily"></span></div>
+      </section>
+
+      <section class="step" id="step-rec">
+        <div class="step-h"><span class="step-no">STEP 6</span><h2>デイケア レクリエーション予定</h2><span class="pgno">P4</span></div>
+        <p class="hint">年月を選ぶと、その月にある日付だけが自動で並びます。各日のレクリエーションを入力すると、P4のカレンダーにすぐ反映されます。<br>スペースを入れると、その位置で改行されます（例：キックイン スナイパー）。空欄の日は何も表示されません。</p>
+        <div class="ym">
+          <label class="fld"><span>年</span><select id="rec-year"></select></label>
+          <label class="fld"><span>月</span><select id="rec-month"></select></label>
+          <button type="button" class="btn" id="show-p4">P4をプレビューで見る</button>
+        </div>
+        <div class="rec-tools"><span class="count" id="rec-count"></span><button type="button" class="linkbtn" id="rec-clear">この月の入力をすべて消す</button></div>
+        <div class="rec-list" id="rec-list"></div>
+        <datalist id="rec-names"></datalist>
+        <p class="hint" style="margin-top:8px">日曜・祝日は赤、土曜は青で表示します。祝日（振替休日・国民の休日を含む）は自動で計算しています。</p>
+      </section>
+
+      <section class="step">
+        <div class="step-h"><span class="step-no">STEP 7</span><h2>月次通信を作成</h2></div>
+        <button type="button" class="btn primary big" id="generate">月次通信を作成</button>
+        <ul class="warnlist" id="warnlist" hidden></ul>
+        <div class="foot-tools">
+          <span>入力内容はこのブラウザに自動で保存されます。</span>
+          <button type="button" class="linkbtn" id="reset-all">入力をすべて消す</button>
+        </div>
+      </section>
+    </form>
+
+    <aside class="preview-col" id="preview-col">
+      <div class="pv">
+        <div class="pv-h">
+          <h2>できあがりイメージ</h2>
+          <div class="tabs" id="tabs" role="group" aria-label="表示の切り替え">
+            <button type="button" class="tab" data-mode="1">P1</button>
+            <button type="button" class="tab" data-mode="2">P2</button>
+            <button type="button" class="tab" data-mode="3">P3</button>
+            <button type="button" class="tab" data-mode="4">P4</button>
+            <button type="button" class="tab sep" data-mode="all">4ページをまとめて確認</button>
+            <button type="button" class="tab" data-mode="sheet">冊子印刷イメージ</button>
+          </div>
+        </div>
+        <div class="stale" id="stale" hidden>
+          <span>入力が変更されています。</span>
+          <button type="button" class="btn primary" id="regen">月次通信を作成して更新</button>
+        </div>
+        <div class="stage" id="stage"><p class="pv-empty">STEP7の「月次通信を作成」を押すと、ここに4ページの通信が表示されます。</p></div>
+
+        <div class="printbar">
+          <button type="button" class="btn primary" id="print-a5">印刷用表示（A5・P1→P4）</button>
+          <button type="button" class="btn primary" id="print-book">冊子印刷モード（A4横・両面）</button>
+        </div>
+        <div class="printguide" id="printguide">
+          <div class="inframe" id="inframe-note" hidden>
+            <b>この画面の中からは印刷画面を開けません。</b>お渡ししたHTMLファイルをパソコンのChromeやEdgeで開き、同じボタンを押すと印刷・PDF保存ができます。
+          </div>
+          <h3>印刷のしかた</h3>
+          <ol>
+            <li><b>印刷用表示</b>：用紙サイズ「A5」、余白「なし」、「背景のグラフィック」にチェック。PDFにする場合は送信先「PDFに保存」。</li>
+            <li><b>冊子印刷モード</b>：用紙「A4・横」、余白「なし」、両面印刷は<b>「短辺で綴じる」</b>。表面に P4｜P1、裏面に P2｜P3 が入り、中央で二つ折りすると P1→P4 の順になります。</li>
+            <li>事務用プリンターでは、紙の端にわずかな白いふちが出ることがあります。</li>
+          </ol>
+        </div>
+      </div>
+    </aside>
+  </div>
+
+  <input type="file" id="file-one" accept="image/*" hidden>
+  <input type="file" id="file-many" accept="image/*" multiple hidden>
+</div>
+
+<div id="print-root" aria-hidden="true"></div>
+
+<script>
+/* =========================================================
+   設定（ケアマネ向け・療養棟向けなどは、ここを増やして展開）
+   ========================================================= */
+const CONFIG = {
+  edition: 'family',
+  logo: 'けいゆう通信',
+  kicker: 'デイケア ご家族向け月次通信',
+  facility: '介護老人保健施設 洛西けいゆうの里',
+  unit: 'デイケア',
+  tel: '075-333-5290',
+  pages: {
+    p2: { eyebrow: 'デイケアスタッフが選ぶ', title: '今月の1枚' },
+    p3: { title: '今月の誕生日の人' },
+    p4: { title: 'デイケア レクリエーション予定' }
+  },
+  lists: {
+    subs:   { max: 6, label: 'サブ写真' },
+    people: { max: 6, label: '誕生日の方' },
+    daily:  { max: 6, label: '日常の写真' }
+  },
+  captionPhrases: [
+    '皆様、笑顔で楽しまれていました。',
+    'スタッフと一緒に取り組まれました。',
+    '利用者様同士の会話も弾みました。',
+    '季節を感じていただける時間となりました。',
+    '今月もたくさんの笑顔が見られました。',
+    '皆様それぞれのペースで参加されています。'
+  ],
+  familyMessages: {
+    A: 'ご家族の皆様からのご意見・ご感想も、ぜひお聞かせください。',
+    B: 'デイケアでの過ごし方について、気になることやご希望がございましたら、いつでもスタッフへお声がけください。',
+    C: '「こんなことをしてほしい」「こんな様子も知りたい」など、皆様からのお声をお待ちしております。',
+    D: 'スタッフの対応やサービスについてのご意見・ご感想も、今後のデイケアづくりに活かしてまいります。',
+    none: ''
+  },
+  recNotes: [
+    '利用の追加、変更、お休み等は、必ず担当のケアマネージャー様と調整の上、変更くださいますようお願い申し上げます。',
+    '急なお休みは、当日朝8：15までに、当施設へご連絡をお願いいたします。',
+    'お手数ですが、ご担当ケアマネージャー様へのご連絡もあわせてお願いいたします。',
+    '持参されたマスクなどの持ち物には、全てにお名前のご記入をお願いいたします。'
+  ],
+  recStrong: ['利用時は、サージカルマスクの着用をお願いします。', '体調不良時は、病院受診をすることをおすすめしております。'],
+  telDisplay: 'TEL（075）333-5290',
+  recSuggest: ['バランス ゲーム', '押し出し ボール', 'ころがし ボトル', 'ウェーブ ゲーム', 'ジャスト カップ', 'パック バッティング', 'バウンド 玉入れ', 'ワンカップ', 'スポンジ ゴルフ', 'キックイン スナイパー', 'カラオケ', 'ボール送り リレー', 'なみなみ ボール', '風船 シュート', '敬老会'],
+  contactLead: 'デイケアの体験利用も随時受け付けています。\nお気軽にお問い合わせください。',
+  defaultGreeting: 'お誕生日おめでとうございます。これからの一年も、健やかで笑顔あふれる日々となりますように。',
+  // 月ごとの彩り（P3の差し色）
+  season: [
+    ['寒椿', '#B5474B'], ['梅', '#B85A74'], ['桃', '#C9687E'], ['桜', '#C97B8E'],
+    ['新緑', '#4F8F5E'], ['紫陽花', '#6475AE'], ['朝顔', '#3F7FA6'], ['向日葵', '#C07F22'],
+    ['桔梗', '#7D65A6'], ['金木犀', '#B7742A'], ['紅葉', '#B0522F'], ['柊', '#5E7F55']
+  ],
+  templates: [
+    { id: 'natural', name: 'ナチュラル', desc: 'アイボリーに淡いグリーン。やわらかく' },
+    { id: 'johoshi', name: '地域情報誌', desc: '白地で整理された、読みやすい誌面' },
+    { id: 'photo',   name: 'フォト',     desc: '写真をより大きく、明朝体で上品に' }
+  ]
+};
+
+/* =========================================================
+   状態
+   ========================================================= */
+let state = null, pvMode = 'all', pvShown = false, pending = null;
+const $ = (id) => document.getElementById(id);
+const uid = () => Math.random().toString(36).slice(2, 9);
+const esc = (s) => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const clamp = (v, a, b) => Math.min(b, Math.max(a, v));
+const nl2br = (s) => esc(s).replace(/\n/g, '<br>');
+
+function emptyState(base) {
+  return {
+    v: 2, isSample: false,
+    year: base?.year ?? 2026, month: base?.month ?? 11, template: base?.template ?? 'natural',
+    cover: { photo: null, title: '', subtitle: '', caption: '' },
+    feature: { photo: null, title: '', caption: '', comment: '', subs: [] },
+    bday: { people: [], greeting: CONFIG.defaultGreeting, daily: [] },
+    message: '',
+    notice: { photo: null, title: '', body: '' },
+    family: base?.family ?? 'B',
+    rec: {}
+  };
+}
+// Ver.1 で保存した内容を Ver.2 の形に移す
+function migrateV1(o) {
+  const s = emptyState({ year: o.year, month: o.month, family: o.family,
+    template: ({ natural: 'natural', kouhou: 'johoshi', photo: 'photo' })[o.template] || 'natural' });
+  const ph = (p) => p?.src ? { src: p.src, fx: p.fx ?? 50, fy: p.fy ?? 45 } : null;
+  s.cover.photo = ph(o.best); s.cover.caption = o.best?.caption || '';
+  const list = o.photos || [];
+  if (list[0]) { s.feature.photo = ph(list[0]); s.feature.caption = list[0].caption || ''; }
+  s.feature.subs = list.slice(1, 7).map(p => ({ id: uid(), ...ph(p), caption: p.caption || '' }));
+  s.bday.daily = list.slice(7, 13).map(p => ({ id: uid(), ...ph(p), caption: p.caption || '' }));
+  s.message = o.message || '';
+  s.notice.body = o.notice || '';
+  return s;
+}
+
+/* =========================================================
+   保存（IndexedDB。使えない環境では保存せずに動く）
+   ========================================================= */
+function withTimeout(p, ms) { return Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error('timeout')), ms))]); }
+const Store = {
+  db: null,
+  open() { return new Promise((res, rej) => { try { const r = indexedDB.open('dc-tsushin', 1); r.onupgradeneeded = () => r.result.createObjectStore('kv'); r.onsuccess = () => res(r.result); r.onerror = () => rej(r.error); } catch (e) { rej(e); } }); },
+  async get(k) {
+    try {
+      this.db = this.db || await withTimeout(this.open(), 1500);
+      return await withTimeout(new Promise((res, rej) => { const q = this.db.transaction('kv', 'readonly').objectStore('kv').get(k); q.onsuccess = () => res(q.result); q.onerror = () => rej(q.error); }), 1500);
+    } catch (e) { return undefined; }
+  },
+  async set(k, v) {
+    this.db = this.db || await withTimeout(this.open(), 1500);
+    return new Promise((res, rej) => { const t = this.db.transaction('kv', 'readwrite'); t.objectStore('kv').put(v, k); t.oncomplete = () => res(); t.onerror = () => rej(t.error); });
+  }
+};
+let saveTimer = null;
+function save() {
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(async () => {
+    try { await Store.set('state', state); $('savestate').textContent = '自動保存しました ' + new Date().toLocaleTimeString('ja-JP', { hour: '2-digit', minute: '2-digit' }); }
+    catch (e) { $('savestate').textContent = 'この画面では保存できません（閉じるまでは入力が残ります）'; }
+  }, 500);
+}
+function touch() { save(); if (pvShown) $('stale').hidden = false; }
+function leaveSample() { if (state.isSample) { state.isSample = false; $('sample-note').hidden = true; } }
+
+/* =========================================================
+   写真の読み込み
+   ========================================================= */
+function readImage(file) {
+  return new Promise((res, rej) => {
+    const url = URL.createObjectURL(file), img = new Image();
+    img.onload = () => {
+      const s = Math.min(1, 1700 / Math.max(img.naturalWidth, img.naturalHeight));
+      const c = document.createElement('canvas');
+      c.width = Math.round(img.naturalWidth * s); c.height = Math.round(img.naturalHeight * s);
+      c.getContext('2d').drawImage(img, 0, 0, c.width, c.height);
+      URL.revokeObjectURL(url); res(c.toDataURL('image/jpeg', 0.86));
+    };
+    img.onerror = () => { URL.revokeObjectURL(url); rej(new Error('decode')); };
+    img.src = url;
+  });
+}
+function imageError(name) { $('savestate').textContent = `「${name}」を読み込めませんでした。iPhoneの写真（HEIC）はJPEGに変換してからお試しください。`; }
+
+/* 写真の参照  s:cover / s:feature / s:notice / l:subs:ID / l:people:ID / l:daily:ID */
+function listArr(name) { return ({ subs: state.feature.subs, people: state.bday.people, daily: state.bday.daily })[name]; }
+function holder(ref) {
+  const [k, a, b] = ref.split(':');
+  return k === 's' ? state[a].photo : listArr(a).find(x => x.id === b);
+}
+function newItem(list, src) {
+  const base = { id: uid(), src, fx: 50, fy: list === 'people' ? 40 : 45 };
+  if (list === 'people') return { ...base, name: '', hideName: false, comment: '' };
+  return { ...base, caption: '' };
+}
+
+/* =========================================================
+   紙面HTML
+   ========================================================= */
+const issue = () => `${state.year}年${state.month}月号`;
+function photo(p, cls = '') {
+  if (!p || !p.src) return `<div class="ph empty ${cls}">写真未登録</div>`;
+  return `<div class="ph ${cls}"><img src="${p.src}" alt="" style="object-position:${p.fx}% ${p.fy}%"></div>`;
+}
+function foot(n) { return `<footer class="pfoot"><span>${esc(CONFIG.logo)}　${issue()}</span><span class="folio">${n}</span></footer>`; }
+function secHead(eyebrow, title, meta, extra = '') {
+  return `<header class="sec"><span class="sec-eyebrow">${esc(eyebrow)}</span><h2 class="sec-title">${esc(title)}</h2><span class="sec-meta">${meta}</span>${extra}</header>`;
+}
+
+function page1(t) {
+  const c = state.cover;
+  const ft = state.feature.title ? `<small>${esc(state.feature.title)}</small>` : '';
+  const nb = state.bday.people.length;
+  return `<div class="page p1 t-${t}">
+    ${photo(c.photo, 'cv-photo')}
+    <div class="cv-shade-top"></div><div class="cv-shade-bot"></div>
+    <header class="cv-mast">
+      <div><div class="cv-logo">${esc(CONFIG.logo)}</div><div class="cv-kicker">${esc(CONFIG.kicker)}</div></div>
+      <div class="cv-issue">${issue()}<small>${esc(CONFIG.unit)}</small></div>
+    </header>
+    ${(c.title || c.subtitle) ? `<div class="cv-head">
+      ${c.title ? `<h1 class="cv-title clamp2">${esc(c.title)}</h1>` : ''}
+      ${c.subtitle ? `<p class="cv-sub clamp2">${esc(c.subtitle)}</p>` : ''}</div>` : ''}
+    <div class="cv-foot">
+      <p class="cv-cap clamp4">${esc(c.caption)}</p>
+      <ul class="cv-toc">
+        <li><b>P2</b><span>${esc(CONFIG.pages.p2.eyebrow)} ${esc(CONFIG.pages.p2.title)}${ft}</span></li>
+        <li><b>P3</b><span>${esc(CONFIG.pages.p3.title)}${nb ? `<small>${state.month}月生まれの皆さま</small>` : ''}</span></li>
+        <li><b>P4</b><span>${esc(CONFIG.pages.p4.title)}<small>${state.month}月の予定</small></span></li>
+      </ul>
+      <div class="cv-fac"><span>${esc(CONFIG.facility)}　${esc(CONFIG.unit)}</span><span>ご家族の皆様へ</span></div>
+    </div>
+  </div>`;
+}
+
+function page2(t) {
+  const f = state.feature, subs = f.subs.filter(s => s.src).slice(0, CONFIG.lists.subs.max);
+  const cap = f.caption.trim(), com = f.comment.trim();
+  const text = (cap || com) ? `<div class="ft-text${cap && com ? '' : ' one'}">
+      ${cap ? `<p class="ft-cap clamp4">${esc(cap)}</p>` : ''}
+      ${com ? `<div class="ft-comment"><span class="ft-who">スタッフより</span><p class="clamp4">${esc(com)}</p></div>` : ''}
+    </div>` : '<div></div>';
+  const subsHTML = subs.length ? `<div class="ft-subs n${subs.length}">${subs.map(s => `<figure class="sfig">${photo(s)}${s.caption ? `<figcaption class="clamp2">${esc(s.caption)}</figcaption>` : ''}</figure>`).join('')}</div>` : '';
+  return `<div class="page pg p2 t-${t}${subs.length ? (subs.length >= 4 ? ' many' : '') : ' nosub'}">
+    ${secHead(CONFIG.pages.p2.eyebrow, CONFIG.pages.p2.title, issue())}
+    <div class="ft-photo bleed">${photo(f.photo)}${f.title ? `<div class="ft-overlay"><h3 class="ft-title clamp2">${esc(f.title)}</h3></div>` : ''}</div>
+    ${text}
+    ${subsHTML}
+    ${foot(2)}
+  </div>`;
+}
+
+function page3(t) {
+  const [flower, mc] = CONFIG.season[state.month - 1];
+  const people = state.bday.people.slice(0, CONFIG.lists.people.max);
+  const daily = state.bday.daily.filter(d => d.src).slice(0, CONFIG.lists.daily.max);
+  const msg = state.message.trim();
+  const peopleHTML = people.length
+    ? `<div class="bd-people n${people.length}">${people.map(p => {
+        const name = !p.hideName && p.name.trim() ? `<b class="bd-name">${esc(p.name.trim())}</b>` : '';
+        const com = p.comment.trim() ? `<span class="bd-com clamp2">${esc(p.comment.trim())}</span>` : '';
+        return `<figure class="bd-p">${photo(p, 'bd-ph')}${name || com ? `<figcaption>${name}${com}</figcaption>` : ''}</figure>`;
+      }).join('')}</div>`
+    : `<div class="bd-people"><p class="bd-empty">今月お誕生日を迎えられる皆さま、<br>おめでとうございます。</p></div>`;
+  const dailyHTML = daily.length ? `<div class="bd-daily bleed n${daily.length}"><span class="bd-dlabel">デイケアのひとコマ</span>
+      ${daily.length >= 4
+        ? daily.map(d => `<figure class="dfig">${photo(d)}${d.caption ? `<figcaption class="dov">${esc(d.caption)}</figcaption>` : ''}</figure>`).join('')
+        : daily.map(d => photo(d)).join('') + daily.map(d => `<p class="dcap clamp2">${esc(d.caption)}</p>`).join('')}</div>` : '<div></div>';
+  const card = msg ? `<section class="bd-card"><span class="bd-card-l">主任より</span><p class="bd-card-t clamp3">${esc(msg)}</p></section>` : '<div></div>';
+  const cls = [daily.length >= 4 ? 'dmany' : '', msg ? 'pmsg' : '', msg && daily.length >= 3 ? 'tight' : ''].join(' ');
+  const greet = state.bday.greeting.trim();
+  return `<div class="page pg p3 t-${t} ${cls}" style="--mc:${mc}">
+    ${secHead(`${state.month}月生まれの皆さま`, CONFIG.pages.p3.title,
+      `<span class="bd-season">${state.month}月の彩り　${flower}</span>`,
+      greet ? `<p class="bd-msg clamp2">${esc(greet)}</p>` : '')}
+    ${peopleHTML}
+    ${dailyHTML}
+    ${card}
+    ${foot(3)}
+  </div>`;
+}
+
+/* ---------- 暦（祝日の自動計算） ---------- */
+const WD = ['日', '月', '火', '水', '木', '金', '土'];
+const reiwa = (y) => y - 2018;
+function calMonth(y, m) { return { days: new Date(y, m, 0).getDate(), first: new Date(y, m - 1, 1).getDay() }; }
+const _holCache = {};
+function jpHolidays(y) {
+  if (_holCache[y]) return _holCache[y];
+  const H = {}, key = (m, d) => `${m}-${d}`, add = (m, d, n) => { H[key(m, d)] = n; };
+  const nthMon = (m, n) => { const f = new Date(y, m - 1, 1).getDay(); return 1 + ((8 - f) % 7) + (n - 1) * 7; };
+  add(1, 1, '元日'); add(1, nthMon(1, 2), '成人の日'); add(2, 11, '建国記念の日'); add(2, 23, '天皇誕生日');
+  add(3, Math.floor(20.8431 + 0.242194 * (y - 1980) - Math.floor((y - 1980) / 4)), '春分の日');
+  add(4, 29, '昭和の日'); add(5, 3, '憲法記念日'); add(5, 4, 'みどりの日'); add(5, 5, 'こどもの日');
+  add(7, nthMon(7, 3), '海の日'); add(8, 11, '山の日'); add(9, nthMon(9, 3), '敬老の日');
+  add(9, Math.floor(23.2488 + 0.242194 * (y - 1980) - Math.floor((y - 1980) / 4)), '秋分の日');
+  add(10, nthMon(10, 2), 'スポーツの日'); add(11, 3, '文化の日'); add(11, 23, '勤労感謝の日');
+  const base = { ...H };
+  const isBase = (dt) => !!base[key(dt.getMonth() + 1, dt.getDate())];
+  // 国民の休日：祝日にはさまれた平日
+  for (let dt = new Date(y, 0, 2); dt.getFullYear() === y; dt.setDate(dt.getDate() + 1)) {
+    const prev = new Date(dt), next = new Date(dt); prev.setDate(dt.getDate() - 1); next.setDate(dt.getDate() + 1);
+    if (!isBase(dt) && dt.getDay() !== 0 && isBase(prev) && isBase(next)) add(dt.getMonth() + 1, dt.getDate(), '国民の休日');
+  }
+  // 振替休日：祝日が日曜なら、その後の最初の祝日でない日
+  Object.keys(base).forEach(k => {
+    const [m, d] = k.split('-').map(Number), dt = new Date(y, m - 1, d);
+    if (dt.getDay() !== 0) return;
+    const n = new Date(dt);
+    do { n.setDate(n.getDate() + 1); } while (H[key(n.getMonth() + 1, n.getDate())]);
+    if (n.getFullYear() === y) add(n.getMonth() + 1, n.getDate(), '振替休日');
+  });
+  return (_holCache[y] = H);
+}
+const recKey = () => `${state.year}-${String(state.month).padStart(2, '0')}`;
+function recData() { state.rec = state.rec || {}; return state.rec[recKey()] || (state.rec[recKey()] = {}); }
+
+/* ---------- 季節の小さなイラスト（SVG） ---------- */
+const ART = {
+  petals(n, rx, ry, cy, fill) { let g = ''; for (let i = 0; i < n; i++) g += `<ellipse cx="0" cy="${cy}" rx="${rx}" ry="${ry}" fill="${fill}" transform="rotate(${i * 360 / n})"/>`; return g; },
+  wrap(x, y, s, r, inner) { return `<g transform="translate(${x} ${y}) rotate(${r}) scale(${s})">${inner}</g>`; },
+  leafPath(col) { return `<path d="M0 14 C-10 3 -8 -10 0 -17 C8 -10 10 3 0 14Z" fill="${col}"/><path d="M0 14 L0 -13" stroke="rgba(255,255,255,.55)" stroke-width="1.2" fill="none"/>`; },
+  sakura: (x, y, s, r) => ART.wrap(x, y, s, r, ART.petals(5, 6.5, 9.5, -9, '#F2B5C3') + '<circle r="3.6" fill="#E07A93"/>'),
+  ume: (x, y, s, r, c = '#EFA2B2') => ART.wrap(x, y, s, r, ART.petals(5, 7, 7, -8, c) + '<circle r="3.2" fill="#D8667F"/>'),
+  tsubaki: (x, y, s, r) => ART.wrap(x, y, s, r, ART.leafPath('#4E7B52').replace('<path', '<path transform="translate(-13 8) rotate(-60)"') + ART.petals(5, 8, 9, -8, '#C5444C') + '<circle r="4.5" fill="#F0C64A"/>'),
+  nanohana: (x, y, s, r) => ART.wrap(x, y, s, r, [[-6, -6], [5, -9], [0, 2], [8, 3], [-8, 5]].map(([a, b]) => `<g transform="translate(${a} ${b})">${ART.petals(4, 2.6, 3.4, -3, '#F1CE3E')}</g>`).join('') + '<path d="M0 6 L0 20" stroke="#6E9A55" stroke-width="2"/>'),
+  leaf: (x, y, s, r, c = '#7FB069') => ART.wrap(x, y, s, r, ART.leafPath(c)),
+  hydrangea: (x, y, s, r) => ART.wrap(x, y, s, r, [[0, 0, '#8FA6D8'], [-9, -5, '#B39AD1'], [9, -5, '#9CC3E0'], [-6, 8, '#9CC3E0'], [7, 8, '#8FA6D8'], [0, -11, '#A9B8E4']].map(([a, b, c]) => `<g transform="translate(${a} ${b})">${ART.petals(4, 3, 4, -3.5, c)}<circle r="1.1" fill="#fff"/></g>`).join('')),
+  drop: (x, y, s, r) => ART.wrap(x, y, s, r, '<path d="M0 -10 C5 -2 7 3 7 6 A7 7 0 0 1 -7 6 C-7 3 -5 -2 0 -10Z" fill="#A9CBE6"/>'),
+  asagao: (x, y, s, r) => ART.wrap(x, y, s, r, '<circle r="13" fill="#6F7FD0"/><circle r="7" fill="#C9D0F2"/><circle r="2.8" fill="#fff"/>' + [0, 72, 144, 216, 288].map(a => `<path d="M0 -3 L0 -12.5" stroke="#fff" stroke-width="1" transform="rotate(${a})" opacity=".7"/>`).join('')),
+  sunflower: (x, y, s, r) => ART.wrap(x, y, s, r, ART.petals(12, 3.4, 8, -11, '#F2C230') + '<circle r="7.5" fill="#8A5A2B"/><circle r="4" fill="#6D4420"/>'),
+  moon: (x, y, s) => ART.wrap(x, y, s, 0, '<circle r="15" fill="#F3DA8C"/><circle cx="-4" cy="-3" r="2.4" fill="#EAC96E"/><circle cx="5" cy="4" r="3" fill="#EAC96E"/>'),
+  rabbit: (x, y, s) => ART.wrap(x, y, s, 0, '<ellipse cx="-3" cy="-16" rx="2.6" ry="7" fill="#fff" stroke="#CFC6BA"/><ellipse cx="3" cy="-16" rx="2.6" ry="7" fill="#fff" stroke="#CFC6BA"/><ellipse cx="0" cy="6" rx="10" ry="8" fill="#fff" stroke="#CFC6BA"/><circle cx="0" cy="-5" r="6.5" fill="#fff" stroke="#CFC6BA"/><circle cx="-2.3" cy="-5.5" r="1" fill="#6B5A50"/><circle cx="2.3" cy="-5.5" r="1" fill="#6B5A50"/><ellipse cx="0" cy="-3" rx="1.4" ry="1" fill="#E9A7B3"/>'),
+  susuki: (x, y, s, r) => ART.wrap(x, y, s, r, '<path d="M0 18 C1 6 3 -4 9 -16 M0 18 C-1 8 -5 -2 -10 -12 M0 18 C0 6 0 -6 1 -18" stroke="#C4A266" stroke-width="1.8" fill="none" stroke-linecap="round"/>'),
+  cosmos: (x, y, s, r, c = '#E9A0BE') => ART.wrap(x, y, s, r, ART.petals(8, 3.6, 8.5, -8.5, c) + '<circle r="3.6" fill="#E8C14A"/>'),
+  acorn: (x, y, s, r) => ART.wrap(x, y, s, r, '<ellipse cx="0" cy="4" rx="7" ry="9" fill="#B67B3F"/><path d="M-8.5 -2 A8.5 6 0 0 1 8.5 -2 Z" fill="#7B5432"/><rect x="-1" y="-11" width="2" height="5" rx="1" fill="#7B5432"/><ellipse cx="-2.5" cy="3" rx="1.6" ry="3.5" fill="rgba(255,255,255,.3)"/>'),
+  maple: (x, y, s, r, c = '#D0553A') => {
+    let pts = [];
+    for (let i = 0; i < 5; i++) { const a = -90 + i * 72; [[8, a - 24], [16, a], [8, a + 24], [5, a + 36]].forEach(([rr, aa]) => { const t = aa * Math.PI / 180; pts.push(`${(rr * Math.cos(t)).toFixed(1)},${(rr * Math.sin(t)).toFixed(1)}`); }); }
+    return ART.wrap(x, y, s, r, `<polygon points="${pts.join(' ')}" fill="${c}"/><path d="M0 3 L0 16" stroke="${c}" stroke-width="1.6" stroke-linecap="round"/>`);
+  },
+  ginkgo: (x, y, s, r) => ART.wrap(x, y, s, r, '<path d="M0 3 C-13 0 -16 -9 -13 -15 Q0 -20 13 -15 C16 -9 13 0 0 3Z M0 -15 L-1.5 -9 L1.5 -9 Z" fill="#E6B83A"/><path d="M0 3 L0 15" stroke="#C99A2A" stroke-width="1.6" stroke-linecap="round"/>'),
+  snow: (x, y, s, r) => ART.wrap(x, y, s, r, [0, 60, 120].map(a => `<g transform="rotate(${a})"><path d="M0 -13 L0 13 M-3.5 -9 L0 -6 L3.5 -9 M-3.5 9 L0 6 L3.5 9" stroke="#93B6DA" stroke-width="1.6" fill="none" stroke-linecap="round"/></g>`).join('')),
+  holly: (x, y, s, r) => ART.wrap(x, y, s, r, '<path d="M-2 0 L-8 -4 L-10 -10 L-14 -8 L-18 -13 L-17 -5 L-21 -2 L-14 1 Z" fill="#3F7A4E"/><path d="M2 0 L8 -4 L10 -10 L14 -8 L18 -13 L17 -5 L21 -2 L14 1 Z" fill="#4E8A5C"/><circle cx="-3" cy="3" r="3.2" fill="#C8373F"/><circle cx="3" cy="3" r="3.2" fill="#C8373F"/><circle cx="0" cy="-2" r="3.2" fill="#D9454C"/>')
+};
+// 月ごとのモチーフ（季節の中でも月で少しずつ変わる）
+const SEASON_ART = {
+  1: ['tsubaki', 'snow', 'ume'], 2: ['ume', 'ume2', 'snow'], 3: ['nanohana', 'sakura', 'leaf'],
+  4: ['sakura', 'sakura', 'leafp'], 5: ['leaf', 'cosmosW', 'leaf2'], 6: ['hydrangea', 'drop', 'leaf'],
+  7: ['asagao', 'leaf', 'asagao'], 8: ['sunflower', 'leaf', 'sunflower'], 9: ['moon', 'rabbit', 'susuki'],
+  10: ['cosmos', 'acorn', 'ginkgo'], 11: ['maple', 'ginkgo', 'maple2', 'acorn'], 12: ['snow', 'holly', 'snow']
+};
+function motif(name, x, y, s, r) {
+  switch (name) {
+    case 'ume2': return ART.ume(x, y, s, r, '#FFFFFF').replace('fill="#FFFFFF"', 'fill="#FFFFFF" stroke="#E7B8C2"');
+    case 'leafp': return ART.leaf(x, y, s, r, '#F4C7D1');
+    case 'leaf2': return ART.leaf(x, y, s, r, '#A9CC7E');
+    case 'cosmosW': return ART.cosmos(x, y, s, r, '#FFFFFF');
+    case 'maple2': return ART.maple(x, y, s, r, '#E4913A');
+    case 'moon': case 'rabbit': return ART[name](x, y, s);
+    default: return ART[name](x, y, s, r);
+  }
+}
+// cells: 横に並ぶマスの数（ヘッダーは2相当）
+function decoSVG(m, cells, seed = 0) {
+  const list = SEASON_ART[m], w = 100 * cells, h = 100;
+  const k = Math.min(list.length, cells >= 3 ? 3 : cells + 1);
+  const sizes = [1.55, 1.05, 1.25], ys = [54, 64, 44], rots = [-12, 18, -4];
+  let g = '';
+  for (let i = 0; i < k; i++) {
+    const name = list[(i + seed) % list.length];
+    const x = w * (i + 0.5) / k + (i % 2 ? 6 : -6);
+    let s = sizes[i] * (cells === 1 ? 0.95 : 1.2);
+    if (m === 9 && name === 'moon') s *= 1.1;
+    g += motif(name, x, ys[i], s, rots[i]);
+  }
+  return `<svg viewBox="0 0 ${w} ${h}" preserveAspectRatio="xMidYMid meet" aria-hidden="true">${g}</svg>`;
+}
+
+function recCell(txt) {
+  const lines = txt.trim().split(/[ 　]+/).filter(Boolean);
+  if (!lines.length) return '';
+  const L = Math.max(...lines.map(l => l.length));
+  const cls = L <= 5 ? (lines.length >= 3 ? 's2' : '') : (L === 6 ? 's2' : 's3');
+  return `<div class="rc-t ${cls}" data-fit>${lines.map(l => `<span>${esc(l)}</span>`).join('')}</div>`;
+}
+function page4(t) {
+  const y = state.year, m = state.month, { days, first } = calMonth(y, m);
+  const rows = Math.ceil((first + days) / 7), trail = rows * 7 - first - days;
+  const hol = jpHolidays(y), data = (state.rec || {})[recKey()] || {};
+  let cells = WD.map((w, i) => `<div class="rc-wd${i === 0 ? ' sun' : i === 6 ? ' sat' : ''}">${w}</div>`).join('');
+  if (first) cells += `<div class="rc-blank" style="grid-column:span ${first}">${decoSVG(m, first, 0)}</div>`;
+  for (let d = 1; d <= days; d++) {
+    const dow = (first + d - 1) % 7, hn = hol[`${m}-${d}`];
+    const cls = (dow === 0 ? ' sun' : dow === 6 ? ' sat' : '') + (hn ? ' hol' : '');
+    cells += `<div class="rc-d${cls}"><span class="rc-n">${d}</span>${hn ? `<span class="rc-h">${hn}</span>` : ''}${recCell(data[d] || '')}</div>`;
+  }
+  if (trail) cells += `<div class="rc-blank" style="grid-column:span ${trail}">${decoSVG(m, trail, 1)}</div>`;
+  return `<div class="page p4 rc t-${t}">
+    <header class="rc-head">
+      <div><span class="rc-era">令和${reiwa(y)}年</span>
+        <h2 class="rc-title"><span class="rc-m">${m}<small>月</small></span><span class="rc-name">${esc(CONFIG.pages.p4.title)}</span></h2></div>
+      <div class="rc-deco">${decoSVG(m, 2, 2)}</div>
+    </header>
+    <div class="rc-cal" style="grid-template-rows:6.5mm repeat(${rows},minmax(0,1fr))">${cells}</div>
+    <section class="rc-notes">
+      <ul>${CONFIG.recNotes.map(n => `<li>${esc(n)}</li>`).join('')}</ul>
+      <p class="rc-strong">${CONFIG.recStrong.map(esc).join('<br>')}</p>
+    </section>
+    <footer class="rc-foot"><span>${esc(CONFIG.facility.replace(' ', '　'))}</span><b>${esc(CONFIG.telDisplay)}</b><span class="folio">4</span></footer>
+  </div>`;
+}
+function buildPages() { const t = state.template; return [page1(t), page2(t), page3(t), page4(t)]; }
+
+function fitText(root) {
+  root.querySelectorAll('[data-fit]').forEach(el => {
+    el.style.fontSize = '';
+    let size = parseFloat(getComputedStyle(el).fontSize);
+    const min = size * 0.72; let g = 0;
+    while (el.scrollHeight > el.clientHeight + 1 && size > min && g++ < 40) { size -= 0.4; el.style.fontSize = size + 'px'; }
+  });
+}
+
+/* =========================================================
+   プレビュー
+   ========================================================= */
+const PX = 96 / 25.4, A5 = { w: 148 * PX, h: 210 * PX }, A4L = { w: 297 * PX, h: 210 * PX };
+const frameHTML = (inner, label, kind) => `<div class="frame-wrap"><div class="frame" data-kind="${kind}"><div class="scaler">${inner}</div></div>${label ? `<div class="frame-label">${label}</div>` : ''}</div>`;
+const sheetHTML = (l, r) => `<div class="sheet">${l}${r}<div class="fold"></div></div>`;
+const LABELS = ['P1 表紙', 'P2 今月の1枚', 'P3 今月の誕生日の人', 'P4 レクリエーション予定'];
+
+function renderPreview() {
+  const pages = buildPages(), stage = $('stage');
+  if (pvMode === 'all') stage.innerHTML = pages.map((p, i) => frameHTML(p, LABELS[i], 'a5')).join('');
+  else if (pvMode === 'sheet') stage.innerHTML =
+    frameHTML(sheetHTML(pages[3], pages[0]), '表面（外側）　左：P4　／　右：P1（表紙）', 'a4') +
+    frameHTML(sheetHTML(pages[1], pages[2]), '裏面（内側）　左：P2　／　右：P3', 'a4');
+  else stage.innerHTML = frameHTML(pages[+pvMode - 1], LABELS[+pvMode - 1], 'a5');
+  document.querySelectorAll('#tabs .tab').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.mode === pvMode)));
+  layoutPreview(); fitText(stage);
+}
+function layoutPreview() {
+  const stage = $('stage'), frames = stage.querySelectorAll('.frame');
+  if (!frames.length) return;
+  const avail = stage.clientWidth - 36, gap = 18;
+  let s;
+  if (pvMode === 'all') { const cols = avail >= 4 * 220 + 3 * gap ? 4 : (avail >= 2 * 190 + gap ? 2 : 1); s = ((avail - gap * (cols - 1)) / cols) / A5.w; }
+  else if (pvMode === 'sheet') s = avail / A4L.w;
+  else s = Math.min(avail / A5.w, 1.15);
+  s = Math.max(0.2, Math.min(s, 1.15));
+  frames.forEach(f => {
+    const d = f.dataset.kind === 'a4' ? A4L : A5;
+    f.style.width = Math.floor(d.w * s) + 'px'; f.style.height = Math.floor(d.h * s) + 'px';
+    f.firstElementChild.style.transform = `scale(${s})`;
+  });
+}
+function generate(scroll = true) {
+  pvShown = true; $('stale').hidden = true;
+  renderPreview(); renderWarnings();
+  if (scroll && window.matchMedia('(max-width:1079px)').matches) $('preview-col').scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+function renderWarnings() {
+  const w = [];
+  if (!state.cover.photo?.src) w.push('表紙写真がまだ登録されていません。');
+  if (!state.cover.title.trim()) w.push('表紙メインタイトルが空欄です。');
+  if (!state.feature.photo?.src) w.push('P2「今月の1枚」の主役写真がまだ登録されていません。');
+  if (!state.bday.people.length) w.push('P3に載せる誕生日の方がいません（お祝いの文だけが載ります）。');
+  if (!state.message.trim()) w.push('P3の主任メッセージが空欄です（カードは表示されません）。');
+  const rd = (state.rec || {})[recKey()] || {};
+  if (!Object.values(rd).some(v => String(v).trim())) w.push(`P4の${state.month}月のレクリエーション予定がまだ入力されていません。`);
+  const ul = $('warnlist'); ul.innerHTML = w.map(x => `<li>${esc(x)}</li>`).join(''); ul.hidden = !w.length;
+}
+
+/* =========================================================
+   印刷
+   ========================================================= */
+let inFrame = false;
+try { inFrame = window.self !== window.top; } catch (e) { inFrame = true; }
+function preparePrint(mode) {
+  const pages = buildPages(), root = $('print-root');
+  if (mode === 'book') { $('page-size').textContent = '@page { size: 297mm 210mm; margin: 0; }'; root.innerHTML = sheetHTML(pages[3], pages[0]) + sheetHTML(pages[1], pages[2]); }
+  else { $('page-size').textContent = '@page { size: 148mm 210mm; margin: 0; }'; root.innerHTML = pages.join(''); }
+  fitText(root);
+}
+function doPrint(mode) {
+  preparePrint(mode);
+  if (inFrame) { $('inframe-note').hidden = false; $('printguide').scrollIntoView({ behavior: 'smooth', block: 'nearest' }); }
+  try { window.print(); } catch (e) {}
+}
+window.addEventListener('beforeprint', () => { if (!$('print-root').children.length) preparePrint('a5'); });
+
+/* =========================================================
+   入力フォーム
+   ========================================================= */
+const getPath = (p) => p.split('.').reduce((o, k) => o?.[k], state);
+function setPath(p, v) { const ks = p.split('.'); const last = ks.pop(); ks.reduce((o, k) => o[k], state)[last] = v; }
+function phraseOptions() { return `<option value="">定型文から選ぶ…</option>` + CONFIG.captionPhrases.map(p => `<option value="${esc(p)}">${esc(p)}</option>`).join(''); }
+function updateCnt(ta) {
+  const wrap = ta.closest('.capwrap'); const cnt = wrap?.querySelector('.cnt'); if (!cnt) return;
+  const n = ta.value.length, soft = +ta.dataset.soft || 80;
+  cnt.textContent = n > soft ? `${n}文字（長めです。はみ出す場合は省略・縮小されます）` : `${n}文字`;
+  cnt.classList.toggle('over', n > soft);
+}
+
+function initStatic() {
+  const years = [2025, 2026, 2027, 2028, 2029, 2030, 2031, 2032];
+  $('year').innerHTML = years.map(y => `<option value="${y}">令和${reiwa(y)}年（${y}年）</option>`).join('');
+  $('rec-year').innerHTML = years.map(y => `<option value="${y}">令和${reiwa(y)}年</option>`).join('');
+  const months = Array.from({ length: 12 }, (_, i) => `<option value="${i + 1}">${i + 1}月</option>`).join('');
+  $('month').innerHTML = months; $('rec-month').innerHTML = months;
+  $('tpls').innerHTML = CONFIG.templates.map(t => `
+    <label class="tpl"><input type="radio" name="tpl" id="tpl-${t.id}" value="${t.id}">
+      <div class="mini ${t.id}"><i class="c"></i><i class="a"></i><i class="b"></i><i class="d"></i></div>
+      <b>${esc(t.name)}</b><small>${esc(t.desc)}</small></label>`).join('');
+  document.querySelectorAll('select.phrase').forEach(s => s.innerHTML = phraseOptions());
+}
+function syncForm() {
+  $('year').value = state.year; $('month').value = state.month; $('rec-year').value = state.year; $('rec-month').value = state.month;
+  const tp = $('tpl-' + state.template); if (tp) tp.checked = true;
+  const fm = $('family-' + state.family); if (fm) fm.checked = true;
+  document.querySelectorAll('#form [data-path]').forEach(el => { el.value = getPath(el.dataset.path) ?? ''; if (el.tagName === 'TEXTAREA') updateCnt(el); });
+  $('sample-note').hidden = !state.isSample;
+  renderSlots(); renderRecList();
+}
+
+function focusBox(ref, p) {
+  return `<div class="focus" data-focus="${ref}" tabindex="0" role="button" aria-label="写真の見せたい位置を指定">
+      <img src="${p.src}" alt=""><span class="dot" style="left:${p.fx}%;top:${p.fy}%"></span></div>
+    <span class="focus-help">顔が切れるときは、見せたい所をタップ</span>`;
+}
+function slotHTML(ref, label) {
+  const p = holder(ref);
+  if (!p?.src) return `<div class="empty-slot"><span>${label}を選んでください</span>
+      <button type="button" class="btn primary" data-act="pick" data-ref="${ref}">${label}を選ぶ</button></div>`;
+  return `<div class="slot"><div class="pimg">${focusBox(ref, p)}
+      <div class="pbtns"><button type="button" class="btn-s" data-act="pick" data-ref="${ref}">差し替え</button>
+      <button type="button" class="btn-s danger" data-act="del" data-ref="${ref}">削除</button></div></div>
+      <div class="pform"><span class="hint" style="margin:0">写真の見せたい位置（顔など）をタップすると、そこが切れにくくなります。</span></div></div>`;
+}
+function listHTML(list) {
+  const arr = listArr(list);
+  return arr.map((p, i) => {
+    const ref = `l:${list}:${p.id}`;
+    let fields;
+    if (list === 'people') fields = `
+      <label class="fld"><span>お名前</span><input type="text" id="nm-${p.id}" data-lk="name" maxlength="16" value="${esc(p.name)}" placeholder="例）田中 花子 様"></label>
+      <label class="check"><input type="checkbox" id="hn-${p.id}" data-lk="hideName"${p.hideName ? ' checked' : ''}>名前を載せない</label>
+      <label class="fld"><span>一言コメント<em>30文字くらいまで</em></span>
+        <input type="text" id="cm-${p.id}" data-lk="comment" maxlength="40" value="${esc(p.comment)}" placeholder="例）これからも歌を楽しみたいです"></label>`;
+    else fields = `
+      <div class="fld capwrap"><label class="fld"><span>短い説明<em>任意。写真が4枚以上のときは1行（15文字ほど）で表示されます</em></span>
+        <textarea id="cp-${p.id}" data-lk="caption" rows="2" maxlength="50" data-soft="36">${esc(p.caption)}</textarea></label>
+        <div class="caprow"><select class="phrase" id="ph-${p.id}" aria-label="定型文から選ぶ">${phraseOptions()}</select><span class="cnt"></span></div></div>`;
+    return `<div class="litem" data-list="${list}" data-id="${p.id}">
+      <div class="pimg">${focusBox(ref, p)}
+        <div class="pbtns">
+          <button type="button" class="btn-s" data-act="up" ${i === 0 ? 'disabled' : ''}>▲ 上へ</button>
+          <button type="button" class="btn-s" data-act="down" ${i === arr.length - 1 ? 'disabled' : ''}>▼ 下へ</button>
+          <button type="button" class="btn-s" data-act="pick" data-ref="${ref}">差し替え</button>
+          <button type="button" class="btn-s danger" data-act="del" data-ref="${ref}">削除</button>
+        </div></div>
+      <div class="pform">${fields}</div></div>`;
+  }).join('');
+}
+function renderSlots() {
+  $('slot-cover').innerHTML = slotHTML('s:cover', '表紙写真');
+  $('slot-feature').innerHTML = slotHTML('s:feature', '主役写真');
+  Object.keys(CONFIG.lists).forEach(l => {
+    $('list-' + l).innerHTML = listHTML(l);
+    const n = listArr(l).length, max = CONFIG.lists[l].max;
+    document.querySelector(`[data-count="${l}"]`).textContent = `${n} / ${max}枚`;
+    document.querySelector(`[data-act="add"][data-list="${l}"]`).disabled = n >= max;
+  });
+  document.querySelectorAll('#form .litem textarea').forEach(updateCnt);
+}
+
+function setYM(y, m) {
+  state.year = y; state.month = m;
+  ['year', 'rec-year'].forEach(id => $(id).value = y); ['month', 'rec-month'].forEach(id => $(id).value = m);
+  renderRecList(); save(); livePreview();
+}
+let liveTimer = null;
+function livePreview() {
+  if (!pvShown) return;
+  clearTimeout(liveTimer);
+  liveTimer = setTimeout(() => { $('stale').hidden = true; renderPreview(); renderWarnings(); }, 350);
+}
+function renderRecList() {
+  const y = state.year, m = state.month, { days, first } = calMonth(y, m), hol = jpHolidays(y), data = recData();
+  let h = '';
+  for (let d = 1; d <= days; d++) {
+    const dow = (first + d - 1) % 7, hn = hol[`${m}-${d}`];
+    const cls = (dow === 0 ? 'sun' : dow === 6 ? 'sat' : '') + (hn ? ' hol' : '');
+    h += `<div class="rrow ${cls}"><label for="rec-${d}">${m}/${d}（${WD[dow]}）${hn ? `<small>${hn}</small>` : ''}</label>
+      <input type="text" id="rec-${d}" data-rec="${d}" list="rec-names" maxlength="24" value="${esc(data[d] || '')}">
+      <button type="button" class="btn-s" data-act="copydown" data-day="${d}"${d === days ? ' disabled' : ''} title="次の日にも同じ内容を入れる">↓次の日へ</button></div>`;
+  }
+  $('rec-list').innerHTML = h;
+  updateRecCount();
+  const names = new Set(CONFIG.recSuggest);
+  Object.values(state.rec || {}).forEach(o => Object.values(o).forEach(v => v && names.add(v)));
+  $('rec-names').innerHTML = [...names].map(n => `<option value="${esc(n)}">`).join('');
+}
+function updateRecCount() {
+  const { days } = calMonth(state.year, state.month), n = Object.values(recData()).filter(v => String(v).trim()).length;
+  $('rec-count').textContent = `令和${reiwa(state.year)}年${state.month}月（${days}日まで）：${n}日分 入力済み`;
+}
+
+async function onFiles(files) {
+  if (!pending || !files.length) return;
+  const p = pending; pending = null;
+  if (p.ref) {
+    const f = files[0];
+    try {
+      const src = await readImage(f);
+      const [k, a] = p.ref.split(':');
+      if (k === 's') state[a].photo = { src, fx: 50, fy: 45 };
+      else { const it = holder(p.ref); if (it) { it.src = src; it.fx = 50; it.fy = a === 'people' ? 40 : 45; } }
+    } catch (e) { imageError(f.name); }
+  } else if (p.list) {
+    const arr = listArr(p.list), room = CONFIG.lists[p.list].max - arr.length;
+    const take = [...files].slice(0, Math.max(0, room));
+    if (files.length > take.length) $('savestate').textContent = `${CONFIG.lists[p.list].label}は${CONFIG.lists[p.list].max}枚までです。`;
+    for (const f of take) { try { arr.push(newItem(p.list, await readImage(f))); } catch (e) { imageError(f.name); } }
+  }
+  leaveSample(); renderSlots(); touch();
+}
+
+function bindForm() {
+  ['year', 'rec-year'].forEach(id => $(id).addEventListener('change', e => setYM(+e.target.value, state.month)));
+  ['month', 'rec-month'].forEach(id => $(id).addEventListener('change', e => setYM(state.year, +e.target.value)));
+  $('show-p4').addEventListener('click', () => { pvMode = '4'; generate(true); });
+  const rc = $('rec-clear');
+  rc.addEventListener('click', () => {
+    if (rc.dataset.armed !== '1') { rc.dataset.armed = '1'; rc.textContent = 'もう一度押すと、この月の予定を消します'; setTimeout(() => { rc.dataset.armed = ''; rc.textContent = 'この月の入力をすべて消す'; }, 4000); return; }
+    rc.dataset.armed = ''; rc.textContent = 'この月の入力をすべて消す';
+    state.rec[recKey()] = {}; renderRecList(); save(); livePreview();
+  });
+  $('tpls').addEventListener('change', e => { state.template = e.target.value; save(); if (pvShown) renderPreview(); });
+  $('file-one').addEventListener('change', e => { const fs = [...e.target.files]; e.target.value = ''; onFiles(fs); });
+  $('file-many').addEventListener('change', e => { const fs = [...e.target.files]; e.target.value = ''; onFiles(fs); });
+
+  const form = $('form');
+  form.addEventListener('submit', e => e.preventDefault());
+  form.addEventListener('input', e => {
+    const t = e.target;
+    if (t.dataset.rec) { const d = recData(); const v = t.value; if (v.trim()) d[t.dataset.rec] = v; else delete d[t.dataset.rec]; updateRecCount(); save(); livePreview(); return; }
+    if (t.dataset.path) { setPath(t.dataset.path, t.value); if (t.tagName === 'TEXTAREA') updateCnt(t); touch(); return; }
+    if (t.dataset.lk && t.type !== 'checkbox') {
+      const it = t.closest('.litem'); const p = listArr(it.dataset.list).find(x => x.id === it.dataset.id);
+      p[t.dataset.lk] = t.value; if (t.tagName === 'TEXTAREA') updateCnt(t); touch();
+    }
+  });
+  form.addEventListener('change', e => {
+    const t = e.target;
+    if (t.dataset.lk && t.type === 'checkbox') {
+      const it = t.closest('.litem'); const p = listArr(it.dataset.list).find(x => x.id === it.dataset.id);
+      p[t.dataset.lk] = t.checked; touch(); return;
+    }
+    if (t.classList.contains('phrase') && t.value) {
+      const ta = t.closest('.capwrap').querySelector('textarea');
+      ta.value = ta.value ? ta.value + t.value : t.value; t.value = '';
+      ta.dispatchEvent(new Event('input', { bubbles: true }));
+    }
+  });
+  form.addEventListener('click', e => {
+    const fo = e.target.closest('[data-focus]');
+    if (fo) {
+      const p = holder(fo.dataset.focus), r = fo.querySelector('img').getBoundingClientRect();
+      p.fx = Math.round(clamp((e.clientX - r.left) / r.width * 100, 0, 100));
+      p.fy = Math.round(clamp((e.clientY - r.top) / r.height * 100, 0, 100));
+      const d = fo.querySelector('.dot'); d.style.left = p.fx + '%'; d.style.top = p.fy + '%';
+      touch(); return;
+    }
+    const btn = e.target.closest('button[data-act]'); if (!btn) return;
+    const act = btn.dataset.act;
+    if (act === 'copydown') {
+      const d = +btn.dataset.day, cur = $('rec-' + d), nx = $('rec-' + (d + 1)); if (!nx) return;
+      nx.value = cur.value; nx.dispatchEvent(new Event('input', { bubbles: true })); nx.focus(); return;
+    }
+    if (act === 'pick') { pending = { ref: btn.dataset.ref }; $('file-one').click(); return; }
+    if (act === 'add') { pending = { list: btn.dataset.list }; $('file-many').click(); return; }
+    if (act === 'del') {
+      if (!btn.classList.contains('confirm')) {
+        btn.classList.add('confirm'); btn.textContent = '本当に削除';
+        setTimeout(() => { if (btn.isConnected) { btn.classList.remove('confirm'); btn.textContent = '削除'; } }, 3000);
+        return;
+      }
+      const [k, a, b] = btn.dataset.ref.split(':');
+      if (k === 's') state[a].photo = null;
+      else { const arr = listArr(a); arr.splice(arr.findIndex(x => x.id === b), 1); }
+      renderSlots(); touch(); return;
+    }
+    const it = btn.closest('.litem'); if (!it) return;
+    const arr = listArr(it.dataset.list), i = arr.findIndex(x => x.id === it.dataset.id);
+    if (act === 'up' && i > 0) [arr[i - 1], arr[i]] = [arr[i], arr[i - 1]];
+    if (act === 'down' && i < arr.length - 1) [arr[i + 1], arr[i]] = [arr[i], arr[i + 1]];
+    renderSlots(); touch();
+  });
+  form.addEventListener('keydown', e => {
+    if (e.target.dataset?.rec && e.key === 'Enter') { e.preventDefault(); const nx = $('rec-' + (+e.target.dataset.rec + 1)); if (nx) nx.focus(); return; }
+    const fo = e.target.closest?.('[data-focus]'); if (!fo) return;
+    const d = ({ ArrowLeft: [-5, 0], ArrowRight: [5, 0], ArrowUp: [0, -5], ArrowDown: [0, 5] })[e.key]; if (!d) return;
+    e.preventDefault();
+    const p = holder(fo.dataset.focus); p.fx = clamp(p.fx + d[0], 0, 100); p.fy = clamp(p.fy + d[1], 0, 100);
+    const dot = fo.querySelector('.dot'); dot.style.left = p.fx + '%'; dot.style.top = p.fy + '%'; touch();
+  });
+
+  $('generate').addEventListener('click', () => generate());
+  $('regen').addEventListener('click', () => { pvShown = true; $('stale').hidden = true; renderPreview(); renderWarnings(); });
+  $('tabs').addEventListener('click', e => { const b = e.target.closest('.tab'); if (!b) return; pvMode = b.dataset.mode; if (!pvShown) { generate(false); return; } renderPreview(); });
+  $('print-a5').addEventListener('click', () => doPrint('a5'));
+  $('print-book').addEventListener('click', () => doPrint('book'));
+  $('clear-sample').addEventListener('click', () => {
+    state = emptyState(state); syncForm(); save();
+    pvShown = false; $('stale').hidden = true; $('warnlist').hidden = true;
+    $('stage').innerHTML = '<p class="pv-empty">写真と文章を入れて、STEP7の「月次通信を作成」を押してください。</p>';
+  });
+  const reset = $('reset-all');
+  reset.addEventListener('click', () => {
+    if (reset.dataset.armed !== '1') {
+      reset.dataset.armed = '1'; reset.textContent = 'もう一度押すと、写真・文章をすべて消します';
+      setTimeout(() => { reset.dataset.armed = ''; reset.textContent = '入力をすべて消す'; }, 4000); return;
+    }
+    reset.dataset.armed = ''; reset.textContent = '入力をすべて消す'; $('clear-sample').click();
+  });
+  if ('ResizeObserver' in window) new ResizeObserver(() => layoutPreview()).observe($('stage'));
+  else window.addEventListener('resize', layoutPreview);
+}
+
+/* =========================================================
+   サンプル（イラストの見本写真・架空のお名前）
+   ========================================================= */
+function rng(seed) { return () => { seed |= 0; seed = seed + 0x6D2B79F5 | 0; let t = Math.imul(seed ^ seed >>> 15, 1 | seed); t = t + Math.imul(t ^ t >>> 7, 61 | t) ^ t; return ((t ^ t >>> 14) >>> 0) / 4294967296; }; }
+function sampleImage(o) {
+  const w = o.w || 1200, h = o.h || 900, r = rng(o.seed);
+  const c = document.createElement('canvas'); c.width = w; c.height = h;
+  const g = c.getContext('2d');
+  const bg = g.createLinearGradient(0, 0, w * .3, h); bg.addColorStop(0, o.sky[0]); bg.addColorStop(1, o.sky[1]);
+  g.fillStyle = bg; g.fillRect(0, 0, w, h);
+  if (!o.noWindow) { g.fillStyle = 'rgba(255,255,255,.34)'; g.fillRect(w * .07, h * .1, w * .26, h * .36); g.fillRect(w * .36, h * .1, w * .26, h * .36); }
+  for (let i = 0; i < 14; i++) { g.beginPath(); g.fillStyle = `rgba(255,255,255,${.06 + r() * .14})`; g.arc(r() * w, r() * h * .65, 18 + r() * 70, 0, Math.PI * 2); g.fill(); }
+  if (o.deco) o.deco(g, w, h, r);
+  g.fillStyle = o.floor; g.fillRect(0, h * .74, w, h * .26);
+  if (o.table) { g.fillStyle = o.table; g.fillRect(w * .12, h * .7, w * .76, h * .07); }
+  o.people.forEach(([x, s, col]) => {
+    const cx = x * w, base = h * .98, bw = w * .15 * s, bh = h * .5 * s;
+    g.fillStyle = col; g.beginPath(); g.ellipse(cx, base - bh * .32, bw / 2, bh * .42, 0, 0, Math.PI * 2); g.fill();
+    g.fillStyle = '#EED8C4'; g.beginPath(); g.arc(cx, base - bh * .86, bw * .3, 0, Math.PI * 2); g.fill();
+    g.fillStyle = 'rgba(90,80,75,.55)'; g.beginPath(); g.arc(cx, base - bh * .93, bw * .31, Math.PI, Math.PI * 2); g.fill();
+  });
+  const label = 'サンプル写真', u = Math.min(w, h);
+  g.font = `bold ${Math.round(u * .036)}px sans-serif`;
+  const tw = g.measureText(label).width;
+  const px = o.labelLeft ? u * .07 : w - tw - u * .09, py = o.labelTop ? u * .1 : h - u * .1;
+  g.fillStyle = 'rgba(0,0,0,.35)'; g.fillRect(px - u * .02, py - u * .045, tw + u * .04, u * .065);
+  g.fillStyle = '#fff'; g.fillText(label, px, py);
+  return c.toDataURL('image/jpeg', .82);
+}
+const leaves = (cols) => (g, w, h, r) => { for (let i = 0; i < 28; i++) { g.fillStyle = cols[i % cols.length]; g.save(); g.translate(r() * w, r() * h * .7); g.rotate(r() * 6); g.beginPath(); g.ellipse(0, 0, 16 + r() * 16, 8 + r() * 6, 0, 0, Math.PI * 2); g.fill(); g.restore(); } };
+const notes = (g, w, h, r) => { g.fillStyle = 'rgba(80,70,110,.35)'; g.font = `${Math.round(h * .08)}px serif`; for (let i = 0; i < 7; i++) g.fillText('♪', w * (.55 + r() * .4), h * (.1 + r() * .45)); };
+const portrait = (seed, sky, col) => sampleImage({ w: 900, h: 900, seed, sky, floor: 'rgba(0,0,0,0)', noWindow: true, people: [[.5, 1.75, col]] });
+
+function sampleState() {
+  const s = emptyState();
+  s.isSample = true;
+  const P = (o, fy = 50) => ({ src: sampleImage(o), fx: 50, fy });
+  s.cover = {
+    photo: P({ seed: 3, w: 1000, h: 1250, labelTop: true, sky: ['#F4CFA6', '#E9A77E'], floor: '#D9AE83', deco: leaves(['rgba(206,96,52,.55)', 'rgba(232,168,64,.6)', 'rgba(160,70,40,.45)']), people: [[.3, 1.05, '#6F9A7E'], [.53, .95, '#C98A6B'], [.76, 1.05, '#7E8FB5']] }, 60),
+    title: '実りの秋、笑顔の午後',
+    subtitle: '色づく中庭を眺めながら、ゆっくり流れるデイケアの時間',
+    caption: '中庭の散歩では、色づいた木々を眺めながら「きれいやねぇ」と会話が弾みました。'
+  };
+  s.feature = {
+    photo: P({ seed: 11, labelTop: true, sky: ['#F2E3C6', '#E8C79A'], floor: '#CFA77A', table: '#B98A5E', deco: leaves(['rgba(200,80,50,.55)', 'rgba(230,160,60,.6)', 'rgba(150,120,50,.5)']), people: [[.25, .9, '#8AA37B'], [.5, .9, '#B7876A'], [.75, .9, '#8C95B8']] }, 55),
+    title: 'みんなでつくった、秋の壁飾り',
+    caption: '11月の作品づくりでは、紅葉や木の実を貼り合わせて、大きな壁飾りを完成させました。',
+    comment: '「この色がいいね」と相談しながら、一枚一枚ていねいに貼ってくださいました。完成した時の皆様の笑顔が忘れられません。',
+    subs: [
+      { id: uid(), ...P({ seed: 21, sky: ['#E4E0F2', '#C9C3E6'], floor: '#B9B1D4', deco: notes, people: [[.3, 1, '#7F8FB8'], [.62, 1, '#C28A78']] }), caption: '音楽レクでは、懐かしい童謡を皆様で。' },
+      { id: uid(), ...P({ seed: 31, sky: ['#DDEBE3', '#BFD8CB'], floor: '#A9C4B6', table: '#E9D2A8', people: [[.35, 1, '#D29B6E'], [.65, .95, '#6E9A88']] }), caption: '売店でのお買い物も楽しみのひとつ。' },
+      { id: uid(), ...P({ seed: 13, sky: ['#F3E6CF', '#E6CDA6'], floor: '#D5B58C', deco: leaves(['rgba(190,70,40,.7)', 'rgba(220,150,50,.7)']), people: [] }), caption: '紅葉を一枚ずつ選んで。' },
+      { id: uid(), ...P({ seed: 71, sky: ['#F7EBDD', '#EEDAC0'], floor: '#DCC3A0', table: '#FFFFFF', people: [[.3, .95, '#B7876A'], [.7, .95, '#7F8FB8']] }), caption: '完成を祝って、みんなでお茶を。' },
+      { id: uid(), ...P({ seed: 81, sky: ['#EDE6D6', '#DCCFB2'], floor: '#C9B48E', deco: leaves(['rgba(170,60,40,.6)', 'rgba(210,140,50,.6)']), people: [[.5, 1.05, '#6F9A7E']] }), caption: '壁に飾って、記念の一枚。' }
+    ]
+  };
+  s.bday = {
+    people: [
+      { id: uid(), src: portrait(101, ['#F6E2CF', '#EFC9A8'], '#C98A6B'), fx: 50, fy: 42, name: '田中 花子 様', hideName: false, comment: 'これからも歌を楽しみたいです。' },
+      { id: uid(), src: portrait(102, ['#E1ECE3', '#C4DAC9'], '#6F8FAF'), fx: 50, fy: 42, name: '佐藤 一郎 様', hideName: true, comment: '毎朝の体操が元気の秘訣です。' },
+      { id: uid(), src: portrait(103, ['#EFE3F0', '#D9C6DD'], '#8FB08A'), fx: 50, fy: 42, name: '山本 静子 様', hideName: false, comment: '皆さんとのおしゃべりが楽しみです。' }
+    ],
+    greeting: CONFIG.defaultGreeting,
+    daily: [
+      { id: uid(), ...P({ seed: 51, sky: ['#DCEAF3', '#BCD6E8'], floor: '#A7C2D6', people: [[.2, .85, '#E0A56C'], [.4, .85, '#7E8FB5'], [.6, .85, '#8AA37B'], [.8, .85, '#C98A6B']] }), caption: '朝の体操。皆様それぞれのペースで。' },
+      { id: uid(), ...P({ seed: 41, sky: ['#F4E6D3', '#EAD2B4'], floor: '#D8BC98', table: '#C49C73', people: [[.22, .9, '#9A7FB0'], [.48, .9, '#6F9A7E'], [.76, .9, '#C98A6B']] }), caption: 'お茶の時間は会話が弾みます。' },
+      { id: uid(), ...P({ seed: 91, sky: ['#EAF0E4', '#D3E0C6'], floor: '#BCCBA9', people: [[.4, 1.05, '#6F8FAF'], [.6, 1.05, '#8FB08A']] }), caption: '歩行練習もこつこつと。' },
+      { id: uid(), ...P({ seed: 95, sky: ['#F6E3D2', '#EBCBAE'], floor: '#D9B993', table: '#FFFFFF', people: [[.3, .95, '#C98A6B'], [.7, .95, '#9A7FB0']] }), caption: '季節の昼食をゆっくりと。' }
+    ]
+  };
+  s.message = '朝晩の冷え込みが深まってまいりました。今月も作品づくりや音楽レクなど、季節を感じる活動に皆様と取り組みました。寒暖差の大きい時期、日々のご様子をしっかり見守ってまいります。';
+  const rec = (pairs) => Object.fromEntries(pairs.flatMap(([days, name]) => days.map(d => [d, name])));
+  s.rec = {
+    '2026-09': rec([[[1], 'バランス ゲーム'], [[2, 3], '押し出し ボール'], [[4, 5], 'ころがし ボトル'], [[7, 8], 'ウェーブ ゲーム'], [[9, 10], 'ジャスト カップ'], [[11, 12], 'パック バッティング'], [[14, 15], 'バウンド 玉入れ'], [[16], 'ワンカップ'], [[17], '敬老会'], [[18, 19], 'スポンジ ゴルフ'], [[21, 22], 'キックイン スナイパー'], [[23, 24], 'カラオケ'], [[25, 26], 'ボール送り リレー'], [[28, 29], 'なみなみ ボール'], [[30], '風船 シュート']]),
+    '2026-11': rec([[[2, 3], 'バランス ゲーム'], [[4, 5], '押し出し ボール'], [[6, 7], 'ころがし ボトル'], [[9, 10], 'ウェーブ ゲーム'], [[11, 12], 'ジャスト カップ'], [[13, 14], 'パック バッティング'], [[16, 17], 'バウンド 玉入れ'], [[18, 19], '秋の 作品づくり'], [[20, 21], 'スポンジ ゴルフ'], [[23, 24], 'キックイン スナイパー'], [[25, 26], 'カラオケ'], [[27, 28], 'ボール送り リレー'], [[30], '風船 シュート']])
+  };
+  s.notice = {
+    photo: P({ seed: 61, sky: ['#EAF0E4', '#D3E0C6'], floor: '#BCCBA9', deco: leaves(['rgba(90,140,90,.5)', 'rgba(200,90,70,.5)']), people: [[.5, .9, '#6F8FAF']] }, 50),
+    title: '12月は「冬の作品展」を開催します',
+    body: '12月中旬より、デイケア内で皆様の作品を展示します。送迎の際などに、ぜひご覧ください。\n年末年始の営業日は、別紙にてお知らせいたします。'
+  };
+  s.family = 'B';
+  return s;
+}
+
+/* =========================================================
+   起動
+   ========================================================= */
+(async function init() {
+  initStatic(); bindForm();
+  const saved = await Store.get('state');
+  if (saved?.v === 2 && !saved.isSample) { state = saved; state.rec = state.rec || {}; }
+  else if (saved?.v === 1 && !saved.isSample) state = migrateV1(saved);
+  else state = sampleState();
+  syncForm();
+  $('inframe-note').hidden = !inFrame;
+  generate(false);
+  if (document.fonts?.ready) document.fonts.ready.then(() => { if (pvShown) fitText($('stage')); });
+})();
+</script>
+</body>
+</html>
